@@ -168,17 +168,17 @@
   },
   "confirm": {
     "deleteProvider": "Delete Provider",
-    "deleteProviderMessage": "Are you sure you want to delete provider \"{{name}}\"? This action cannot be undone.",
+    "deleteProviderMessage": "Are you sure you want to delete provider \\\"{{name}}\\\"? This action cannot be undone.",
     "removeProvider": "Remove Provider",
-    "removeProviderMessage": "Are you sure you want to remove provider \"{{name}}\" from the configuration?\n\nAfter removal, this provider will no longer be active, but the configuration data will be retained in GuYu Mate. You can re-add it at any time.",
+    "removeProviderMessage": "Are you sure you want to remove provider \\\"{{name}}\\\" from the configuration?\\n\\nAfter removal, this provider will no longer be active, but the configuration data will be retained in GuYu Mate. You can re-add it at any time.",
     "proxy": {
       "title": "Enable Local Proxy",
-      "message": "Local proxy is an advanced feature. Please make sure you understand how it works before enabling.\n\nWe recommend consulting the relevant documentation or your provider for proper configuration.",
+      "message": "Local proxy is an advanced feature. Please make sure you understand how it works before enabling.\\n\\nWe recommend consulting the relevant documentation or your provider for proper configuration.",
       "confirm": "I understand, enable"
     },
     "usage": {
       "title": "Configure Usage Query",
-      "message": "Usage query requires a custom script or API parameters. Please make sure you have obtained the necessary information from your provider.\n\nIf unsure how to configure, please consult your provider's documentation first.",
+      "message": "Usage query requires a custom script or API parameters. Please make sure you have obtained the necessary information from your provider.\\n\\nIf unsure how to configure, please consult your provider's documentation first.",
       "confirm": "I understand, configure"
     }
   },
@@ -356,7 +356,7 @@
       "presets": {
         "label": "Provider",
         "jianguoyun": "Jianguoyun",
-        "jianguoyunHint": "Generate an \"App Password\" in Jianguoyun security settings. Do not use your login password.",
+        "jianguoyunHint": "Generate an \\\"App Password\\\" in Jianguoyun security settings. Do not use your login password.",
         "nextcloud": "Nextcloud",
         "nextcloudHint": "Replace your-server with your Nextcloud domain and USERNAME with your username.",
         "synology": "Synology NAS",
@@ -399,7 +399,7 @@
     "autoReload": "Data refreshed",
     "languageOptionChinese": "中文",
     "languageOptionEnglish": "English",
-    "languageOptionJapanese": "日本�?,
+    "languageOptionJapanese": "日本?",
     "windowBehavior": "Window Behavior",
     "windowBehaviorHint": "Configure window minimize and Claude plugin integration policies.",
     "launchOnStartup": "Launch on Startup",
@@ -460,7 +460,7 @@
     "configDirectoryDescription": "When using Claude Code or Codex in environments like WSL, you can manually specify the configuration directory to the one in WSL to keep provider data consistent with the main environment.",
     "appConfigDir": "GuYu Mate Configuration Directory",
     "appConfigDirDescription": "Customize the storage location for GuYu Mate configuration (point to cloud sync folder to enable config sync)",
-    "browsePlaceholderApp": "e.g., C:\\Users\\Administrator\\.guyu-mate",
+    "browsePlaceholderApp": "e.g., C:\\\\Users\\\\Administrator\\\\.guyu-mate",
     "claudeConfigDir": "Claude Code Configuration Directory",
     "claudeConfigDirDescription": "Override Claude configuration directory (settings.json) and keep claude.json (MCP) alongside it.",
     "codexConfigDir": "Codex Configuration Directory",
@@ -629,17 +629,17 @@
     "officialHint": "💡 Official provider uses browser login, no API Key needed",
     "getApiKey": "Get API Key",
     "partnerPromotion": {
-      "packycode": "PackyCode is an official partner of GuYu Mate. Register using this link and enter \"guyu-mate\" promo code during recharge to get 10% off",
+      "packycode": "PackyCode is an official partner of GuYu Mate. Register using this link and enter \\\"guyu-mate\\\" promo code during recharge to get 10% off",
       "minimax_cn": "MiniMax Coding Plan Special Offer, Starter from ¥9.9",
       "minimax_en": "MiniMax Coding Plan Black Friday, Starter is now $2/mo (80% OFF!)",
       "dmxapi": "Claude Code exclusive model 66% OFF now!",
-      "cubence": "Cubence is an official partner of GuYu Mate. Register using this link and enter \"GUYUMATE\" promo code during recharge to get 10% off every top-up",
+      "cubence": "Cubence is an official partner of GuYu Mate. Register using this link and enter \\\"GUYUMATE\\\" promo code during recharge to get 10% off every top-up",
       "aigocode": "AIGoCode is an official partner of GuYu Mate. Register using this link and get 10% bonus credit on your first top-up!",
       "rightcode": "RightCode is an official partner of GuYu Mate. Register using this link and get 5% bonus credit on every top-up!",
       "aicodemirror": "AICodeMirror is an official partner of GuYu Mate. Register using this link to get 20% off!",
-      "aicoding": "AI Coding offers an exclusive discount for GuYu Mate users �?10% off your first top-up!",
-      "crazyrouter": "CrazyRouter offers an exclusive bonus for GuYu Mate users �?30% extra credit on your first top-up!",
-      "sssaicode": "SSAI Code offers an exclusive bonus for GuYu Mate users �?$10 extra credit on every top-up!"
+      "aicoding": "AI Coding offers an exclusive discount for GuYu Mate users ?10% off your first top-up!",
+      "crazyrouter": "CrazyRouter offers an exclusive bonus for GuYu Mate users ?30% extra credit on your first top-up!",
+      "sssaicode": "SSAI Code offers an exclusive bonus for GuYu Mate users ?$10 extra credit on every top-up!"
     },
     "parameterConfig": "Parameter Config - {{name}} *",
     "mainModel": "Main Model (optional)",
@@ -740,7 +740,7 @@
   },
   "codexConfig": {
     "authJson": "auth.json (JSON) *",
-    "authJsonPlaceholder": "{\n  \"OPENAI_API_KEY\": \"sk-your-api-key-here\"\n}",
+    "authJsonPlaceholder": "{\\n  \\\"OPENAI_API_KEY\\\": \\\"sk-your-api-key-here\\\"\\n}",
     "authJsonHint": "Codex auth.json configuration content",
     "configToml": "config.toml (TOML)",
     "configTomlHint": "Codex config.toml configuration content",
@@ -786,7 +786,7 @@
     "noExtraOptions": "No extra options configured",
     "noModelOptions": "Model options, click + to add",
     "modelOptionKeyPlaceholder": "provider",
-    "modelOptionValuePlaceholder": "{\"order\": [\"baseten\"]}"
+    "modelOptionValuePlaceholder": "{\\\"order\\\": [\\\"baseten\\\"]}"
   },
   "providerPreset": {
     "label": "Provider Preset",
@@ -833,7 +833,7 @@
     "modelPricing": "Model Pricing",
     "loadPricingError": "Failed to load pricing data",
     "modelPricingDesc": "Configure token costs for each model",
-    "noPricingData": "No pricing data. Click \"Add\" to add model pricing configuration.",
+    "noPricingData": "No pricing data. Click \\\"Add\\\" to add model pricing configuration.",
     "model": "Model",
     "displayName": "Display Name",
     "inputCost": "Input Cost",
@@ -937,22 +937,22 @@
     "scriptConfig": "Request configuration",
     "extractorCode": "Extractor code",
     "extractorHint": "Return object should include remaining quota fields",
-    "fieldIsValid": "�?isValid: Boolean, whether plan is valid",
-    "fieldInvalidMessage": "�?invalidMessage: String, reason for expiration (shown when isValid is false)",
-    "fieldRemaining": "�?remaining: Number, remaining quota",
-    "fieldUnit": "�?unit: String, unit (e.g., \"USD\")",
-    "fieldPlanName": "�?planName: String, plan name",
-    "fieldTotal": "�?total: Number, total quota",
-    "fieldUsed": "�?used: Number, used quota",
-    "fieldExtra": "�?extra: String, custom display text",
-    "tip1": "�?Variables {{apiKey}} and {{baseUrl}} are automatically replaced",
-    "tip2": "�?Extractor function runs in sandbox environment, supports ES2020+ syntax",
-    "tip3": "�?Entire config must be wrapped in () to form object literal expression"
+    "fieldIsValid": "?isValid: Boolean, whether plan is valid",
+    "fieldInvalidMessage": "?invalidMessage: String, reason for expiration (shown when isValid is false)",
+    "fieldRemaining": "?remaining: Number, remaining quota",
+    "fieldUnit": "?unit: String, unit (e.g., \\\"USD\\\")",
+    "fieldPlanName": "?planName: String, plan name",
+    "fieldTotal": "?total: Number, total quota",
+    "fieldUsed": "?used: Number, used quota",
+    "fieldExtra": "?extra: String, custom display text",
+    "tip1": "?Variables {{apiKey}} and {{baseUrl}} are automatically replaced",
+    "tip2": "?Extractor function runs in sandbox environment, supports ES2020+ syntax",
+    "tip3": "?Entire config must be wrapped in () to form object literal expression"
   },
   "errors": {
     "usage_query_failed": "Usage query failed",
     "configLoadFailedTitle": "Configuration Load Failed",
-    "configLoadFailedMessage": "Unable to read configuration file:\n{{path}}\n\nError details:\n{{detail}}\n\nPlease check if the JSON is valid, or restore from a backup file (e.g., config.json.bak) in the same directory.\n\nThe app will exit so you can fix this."
+    "configLoadFailedMessage": "Unable to read configuration file:\\n{{path}}\\n\\nError details:\\n{{detail}}\\n\\nPlease check if the JSON is valid, or restore from a backup file (e.g., config.json.bak) in the same directory.\\n\\nThe app will exit so you can fix this."
   },
   "presetSelector": {
     "title": "Select Configuration Type",
@@ -974,7 +974,7 @@
       "addServer": "Add Server",
       "editServer": "Edit Server",
       "deleteServer": "Delete Server",
-      "deleteConfirm": "Are you sure you want to delete server \"{{id}}\"? This action cannot be undone.",
+      "deleteConfirm": "Are you sure you want to delete server \\\"{{id}}\\\"? This action cannot be undone.",
       "noServers": "No servers yet",
       "enabledApps": "Enabled Apps",
       "noImportFound": "No MCP servers to import found. All servers are already managed by GuYu Mate.",
@@ -1024,9 +1024,9 @@
       "jsonConfig": "Full JSON Configuration",
       "jsonConfigOrPrefix": "Full JSON configuration or use",
       "tomlConfigOrPrefix": "Full TOML configuration or use",
-      "jsonPlaceholder": "{\n  \"type\": \"stdio\",\n  \"command\": \"uvx\",\n  \"args\": [\"mcp-server-fetch\"]\n}",
+      "jsonPlaceholder": "{\\n  \\\"type\\\": \\\"stdio\\\",\\n  \\\"command\\\": \\\"uvx\\\",\\n  \\\"args\\\": [\\\"mcp-server-fetch\\\"]\\n}",
       "tomlConfig": "Full TOML Configuration",
-      "tomlPlaceholder": "type = \"stdio\"\ncommand = \"uvx\"\nargs = [\"mcp-server-fetch\"]",
+      "tomlPlaceholder": "type = \\\"stdio\\\"\\ncommand = \\\"uvx\\\"\\nargs = [\\\"mcp-server-fetch\\\"]",
       "useWizard": "Config Wizard",
       "syncOtherSide": "Mirror to {{target}}",
       "syncOtherSideHint": "Apply the same settings to {{target}}; existing entries with the same id will be overwritten.",
@@ -1042,14 +1042,14 @@
       "command": "Command",
       "commandPlaceholder": "npx or uvx",
       "args": "Arguments",
-      "argsPlaceholder": "arg1\narg2",
+      "argsPlaceholder": "arg1\\narg2",
       "env": "Environment Variables",
-      "envPlaceholder": "KEY1=value1\nKEY2=value2",
+      "envPlaceholder": "KEY1=value1\\nKEY2=value2",
       "url": "URL",
       "urlPlaceholder": "https://api.example.com/mcp",
       "urlRequired": "Please enter URL",
       "headers": "Headers (optional)",
-      "headersPlaceholder": "Authorization: Bearer your_token_here\nContent-Type: application/json",
+      "headersPlaceholder": "Authorization: Bearer your_token_here\\nContent-Type: application/json",
       "preview": "Configuration Preview",
       "apply": "Apply Configuration"
     },
@@ -1060,7 +1060,7 @@
     "args": "Args",
     "argsPlaceholder": "e.g., mcp-server-fetch --help",
     "env": "Environment (one per line, KEY=VALUE)",
-    "envPlaceholder": "FOO=bar\nHELLO=world",
+    "envPlaceholder": "FOO=bar\\nHELLO=world",
     "reset": "Reset",
     "msg": {
       "saved": "Saved",
@@ -1085,7 +1085,7 @@
     },
     "confirm": {
       "deleteTitle": "Delete MCP Server",
-      "deleteMessage": "Are you sure you want to delete MCP server \"{{id}}\"? This action cannot be undone."
+      "deleteMessage": "Are you sure you want to delete MCP server \\\"{{id}}\\\"? This action cannot be undone."
     },
     "presets": {
       "title": "Select MCP Type",
@@ -1140,7 +1140,7 @@
     "description": "Description",
     "descriptionPlaceholder": "Optional description",
     "content": "Content",
-    "contentPlaceholder": "# {{filename}}\n\nEnter prompt content here...",
+    "contentPlaceholder": "# {{filename}}\\n\\nEnter prompt content here...",
     "loadFailed": "Failed to load prompts",
     "saveSuccess": "Saved successfully",
     "saveFailed": "Failed to save",
@@ -1154,7 +1154,7 @@
     "importFailed": "Failed to import",
     "confirm": {
       "deleteTitle": "Confirm Delete",
-      "deleteMessage": "Are you sure you want to delete prompt \"{{name}}\"?"
+      "deleteMessage": "Are you sure you want to delete prompt \\\"{{name}}\\\"?"
     }
   },
   "workspace": {
@@ -1264,7 +1264,7 @@
       "description": "Manage agents.defaults in openclaw.json (default model, runtime parameters, etc.)",
       "modelSection": "Model Configuration",
       "primaryModel": "Primary Model",
-      "primaryModelHint": "Set via the \"Set as Default Model\" button in the provider list",
+      "primaryModelHint": "Set via the \\\"Set as Default Model\\\" button in the provider list",
       "notSet": "Not set",
       "fallbackModels": "Fallback Models",
       "fallbackModelsHint": "Comma-separated, ordered by priority",
@@ -1413,7 +1413,7 @@
     "noUnmanagedFound": "No skills to import found. All skills are already managed by GuYu Mate.",
     "foundIn": "Found in",
     "local": "Local",
-    "uninstallConfirm": "Are you sure you want to uninstall \"{{name}}\"? This will remove the skill from all apps.",
+    "uninstallConfirm": "Are you sure you want to uninstall \\\"{{name}}\\\"? This will remove the skill from all apps.",
     "uninstallInMainPanel": "Please uninstall skills from the main panel",
     "notFound": "Skill not found",
     "apps": {
@@ -1465,7 +1465,7 @@
     "warning": "Please confirm the information above is correct before importing. You can edit or delete it later in the provider list.",
     "parseError": "Failed to parse deep link",
     "importSuccess": "Import successful",
-    "importSuccessDescription": "Provider \"{{name}}\" has been successfully imported",
+    "importSuccessDescription": "Provider \\\"{{name}}\\\" has been successfully imported",
     "importError": "Failed to import",
     "configSource": "Config Source",
     "configEmbedded": "Embedded Config",
@@ -1521,7 +1521,7 @@
     "success": "Configuration migrated successfully",
     "skillsSuccess": "Automatically imported {{count}} skill(s) into unified management",
     "skillsFailed": "Failed to auto import skills",
-    "skillsFailedDescription": "Open the Skills page and click \"Import Existing\" to import manually (or restart and try again)."
+    "skillsFailedDescription": "Open the Skills page and click \\\"Import Existing\\\" to import manually (or restart and try again)."
   },
   "agents": {
     "title": "Agents"
@@ -1546,8 +1546,8 @@
       "tooltip": "Failover priority {{priority}}"
     },
     "tooltip": {
-      "enabled": "{{app}} failover enabled\nRequests follow queue priority (P1→P2�?..)",
-      "disabled": "Enable {{app}} failover\nSwitches to queue P1 immediately, then falls back on failures"
+      "enabled": "{{app}} failover enabled\\nRequests follow queue priority (P1→P2?..)",
+      "disabled": "Enable {{app}} failover\\nSwitches to queue P1 immediately, then falls back on failures"
     }
   },
   "proxy": {
@@ -1744,7 +1744,7 @@
     "add": "Add Universal Provider",
     "edit": "Edit Universal Provider",
     "empty": "No universal providers yet",
-    "emptyHint": "Click the \"Add Universal Provider\" button below to create one",
+    "emptyHint": "Click the \\\"Add Universal Provider\\\" button below to create one",
     "selectPreset": "Select Preset Type",
     "name": "Name",
     "namePlaceholder": "e.g., My NewAPI",
@@ -1773,9 +1773,9 @@
     "saveError": "Failed to save universal provider",
     "deleteError": "Failed to delete universal provider",
     "deleteConfirmTitle": "Delete Universal Provider",
-    "deleteConfirmDescription": "Are you sure you want to delete \"{{name}}\"? This will also delete its generated provider configurations in each app.",
+    "deleteConfirmDescription": "Are you sure you want to delete \\\"{{name}}\\\"? This will also delete its generated provider configurations in each app.",
     "syncConfirmTitle": "Sync Universal Provider",
-    "syncConfirmDescription": "Syncing \"{{name}}\" will overwrite the associated provider configurations in Claude, Codex, and Gemini. Do you want to continue?",
+    "syncConfirmDescription": "Syncing \\\"{{name}}\\\" will overwrite the associated provider configurations in Claude, Codex, and Gemini. Do you want to continue?",
     "syncConfirm": "Sync",
     "saveAndSync": "Save & Sync",
     "savedAndSynced": "Saved and synced to all apps",
@@ -1803,9 +1803,9 @@
     "profileUpdated": "OMO config updated",
     "invalidJson": "Other Fields contains invalid JSON",
     "confirmDelete": "Delete Config",
-    "confirmDeleteMsg": "Delete \"{{name}}\"?",
+    "confirmDeleteMsg": "Delete \\\"{{name}}\\\"?",
     "profileDeleted": "Config deleted",
-    "imported": "Imported as \"{{name}}\"",
+    "imported": "Imported as \\\"{{name}}\\\"",
     "import": "Import",
     "global": "Global",
     "empty": "No OMO configs yet. Click + Add or Import from local.",
@@ -1848,7 +1848,7 @@
     "fillRecommendedPartial": "Filled {{filled}} recommended models, {{unmatched}} unmatched",
     "fillRecommendedAllSet": "All slots already have models configured",
     "fillRecommendedNoMatch": "Recommended models not found in configured providers",
-    "configSummary": "{{agents}} agents, {{categories}} categories configured · Click �?for advanced params",
+    "configSummary": "{{agents}} agents, {{categories}} categories configured · Click ?for advanced params",
     "enabledModelsCount": "{{count}} configured models available",
     "source": "from:",
     "otherFieldsJson": "Other Fields (JSON)",
@@ -1893,7 +1893,7 @@
       "sisyphus": "Main orchestrator responsible for task planning, delegation and parallel execution. Uses extended thinking (32k budget) and drives workflows through TODO lists to ensure task completion.",
       "atlas": "Main orchestrator (holds TODO list) responsible for task distribution and coordination during execution phase. Delegates to specialized agents rather than completing all work directly.",
       "prometheus": "Strategic planner that collects requirements through interview mode and creates detailed work plans. Can only read/write Markdown files in .sisyphus/ directory, never writes code directly.",
-      "hephaestus": "Autonomous deep worker (\"legitimate craftsman\") inspired by AmpCode deep mode. Goal-oriented execution that launches 2-5 explore/librarian agents in parallel for research before taking action.",
+      "hephaestus": "Autonomous deep worker (\\\"legitimate craftsman\\\") inspired by AmpCode deep mode. Goal-oriented execution that launches 2-5 explore/librarian agents in parallel for research before taking action.",
       "oracle": "Architecture decision and debugging advisor. Read-only consulting agent providing excellent logical reasoning and deep analysis. Cannot write files or delegate tasks.",
       "librarian": "Multi-repository analysis and documentation retrieval expert. Deeply understands codebases and provides evidence-based answers. Excels at finding official documentation and open-source implementation examples.",
       "explore": "Fast codebase exploration and context grep expert. Uses lightweight models for high-speed search. The scout for understanding code structure.",
