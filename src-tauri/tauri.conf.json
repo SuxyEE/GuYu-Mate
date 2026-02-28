@@ -60,7 +60,7 @@
       }
     },
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM4MDI4QzlBNTczOTI4RTMKUldUaktEbFhtb3dDeUM5US9kT0FmdGR5Ti9vQzcwa2dTMlpibDVDUmQ2M0VGTzVOWnd0SGpFVlEK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDkxMEE0QUE5NkQ3RDQyNDQKUldSRVFuMXRxVW9La1E0SEdQL3ZINHM5SWZDVDY0c1dzSS9teW9KVWwwSUN3eXcvRDBNd3ozRlIK",
       "endpoints": [
         "https://github.com/SuxyEE/GuYu-Mate/releases/latest/download/latest.json",
         "https://github.com/SuxyEE/GuYu-Mate/releases/latest/download/latest.json"
