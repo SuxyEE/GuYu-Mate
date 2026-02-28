@@ -1,0 +1,2140 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuYu Mate 娣遍摼鎺ユ祴璇?/title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .link-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .link-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .link-card h3 {
+            color: #2c3e50;
+            font-size: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .link-card .description {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .deep-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+
+        .deep-link:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #1f6391 100%);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .deep-link:active {
+            transform: translateY(0);
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .info-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-box ul {
+            list-style: disc;
+            margin-left: 20px;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 20px;
+        }
+
+        .generator-section {
+            background: #e8f4f8;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+        }
+
+        .generator-section h2 {
+            color: #2c3e50;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #229954 0%, #1e8449 100%);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid #3498db;
+        }
+
+        .result-box strong {
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .result-text {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 13px;
+            color: #2c3e50;
+            border: 1px solid #dee2e6;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            margin-right: 10px;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #8e44ad 0%, #7d3c98 100%);
+        }
+
+        .app-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-claude {
+            background: #e8f4f8;
+            color: #3498db;
+        }
+
+        .badge-codex {
+            background: #fef5e7;
+            color: #f39c12;
+        }
+
+        .badge-gemini {
+            background: #fdeef4;
+            color: #e91e63;
+        }
+
+        .param-list {
+            background: #f8f9fa;
+            border-left: 3px solid #3498db;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #495057;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+        }
+
+        .param-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 6px;
+            background: #3498db;
+            color: white;
+        }
+
+        .param-tag.optional {
+            background: #95a5a6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .generator-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>馃敆 GuYu Mate 娣遍摼鎺ユ祴璇?/h1>
+            <p>鐐瑰嚮涓嬫柟閾炬帴娴嬭瘯娣遍摼鎺ュ鍏ュ姛鑳?/p>
+        </div>
+
+        <div class="content">
+
+            <!-- 閰嶇疆鏂囦欢瀵煎叆绀轰緥 (v3.8+) -->
+            <div class="section">
+                <h2>馃摝 閰嶇疆鏂囦欢瀵煎叆绀轰緥 <span class="version-badge">v3.8+</span></h2>
+
+                <!-- Claude 閰嶇疆鏂囦欢瀵煎叆 -->
+                <div class="link-card">
+                    <h3>
+                        <span class="app-badge badge-claude">Claude</span>
+                        瀹屾暣 JSON 閰嶇疆瀵煎叆
+                    </h3>
+                    <p class="description">
+                        閫氳繃 Base64 缂栫爜鐨?JSON 閰嶇疆鏂囦欢瀵煎叆瀹屾暣閰嶇疆锛屽寘鍚墍鏈夊洓绉嶆ā鍨嬪拰绔偣淇℃伅銆?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> resource=provider, app=claude, name<br>
+                        <span class="param-tag optional">鍙€?/span> <strong>config</strong> (Base64 JSON),
+                        <strong>configFormat=json</strong>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=provider&app=claude&name=Claude%20Complete&configFormat=json&config=eyJlbnYiOnsiQU5USFJPUElDX0FVVEhfVE9LRU4iOiJzay1hbnQtdGVzdC1rZXkxMjMiLCJBTlRIUk9QSUNfQkFTRV9VUkwiOiJodHRwczovL2FwaS5hbnRocm9waWMuY29tL3YxIiwiQU5USFJPUElDX01PREVMIjoiY2xhdWRlLXNvbm5ldC00LjUiLCJBTlRIUk9QSUNfREVGQVVMVF9IQUlLVV9NT0RFTCI6ImNsYXVkZS1oYWlrdS00LjEiLCJBTlRIUk9QSUNfREVGQVVMVF9TT05ORVRfTU9ERUwiOiJjbGF1ZGUtc29ubmV0LTQuNSIsIkFOVEhST1BJQ19ERUZBVUxUX09QVVNfTU9ERUwiOiJjbGF1ZGUtb3B1cy00In19"
+                            class="deep-link">
+                            馃摜 瀵煎叆瀹屾暣閰嶇疆
+                        </a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=provider&app=claude&name=Claude%20Complete&configFormat=json&config=eyJlbnYiOnsiQU5USFJPUElDX0FVVEhfVE9LRU4iOiJzay1hbnQtdGVzdC1rZXkxMjMiLCJBTlRIUk9QSUNfQkFTRV9VUkwiOiJodHRwczovL2FwaS5hbnRocm9waWMuY29tL3YxIiwiQU5USFJPUElDX01PREVMIjoiY2xhdWRlLXNvbm5ldC00LjUiLCJBTlRIUk9QSUNfREVGQVVMVF9IQUlLVV9NT0RFTCI6ImNsYXVkZS1oYWlrdS00LjEiLCJBTlRIUk9QSUNfREVGQVVMVF9TT05ORVRfTU9ERUwiOiJjbGF1ZGUtc29ubmV0LTQuNSIsIkFOVEhST1BJQ19ERUZBVUxUX09QVVNfTU9ERUwiOiJjbGF1ZGUtb3B1cy00In19', this)">
+                            馃搵 澶嶅埗閾炬帴
+                        </button>
+                    </div>
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">// 瑙ｇ爜鍚庣殑閰嶇疆鍐呭:</div>
+                        {<br>
+                        &nbsp;&nbsp;"env": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_AUTH_TOKEN": "sk-ant-test-key123",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_BASE_URL": "https://api.anthropic.com/v1",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_MODEL": "claude-sonnet-4.5",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4.1",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4.5",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4"<br>
+                        &nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </div>
+
+                <!-- URL 鍙傛暟瑕嗙洊閰嶇疆鏂囦欢 -->
+                <div class="link-card">
+                    <h3>
+                        <span class="app-badge badge-claude">Claude</span>
+                        閰嶇疆 + URL 鍙傛暟瑕嗙洊
+                    </h3>
+                    <p class="description">
+                        閰嶇疆鏂囦欢鎻愪緵鍩虹璁剧疆,URL 鍙傛暟瑕嗙洊 API Key銆俇RL 鍙傛暟浼樺厛绾ф渶楂樸€?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> name, config<br>
+                        <span class="param-tag optional">瑕嗙洊</span> <strong>apiKey</strong> (瑕嗙洊閰嶇疆鏂囦欢涓殑鍊?
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=provider&app=claude&name=My%20Custom&apiKey=sk-ant-my-new-key&configFormat=json&config=eyJlbnYiOnsiQU5USFJPUElDX0JBU0VfVVJMIjoiaHR0cHM6Ly9hcGkuYW50aHJvcGljLmNvbS92MSIsIkFOVEhST1BJQ19NT0RFTCI6ImNsYXVkZS1zb25uZXQtNC41In19"
+                            class="deep-link">
+                            馃摜 瀵煎叆娣峰悎閰嶇疆
+                        </a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=provider&app=claude&name=My%20Custom&apiKey=sk-ant-my-new-key&configFormat=json&config=eyJlbnYiOnsiQU5USFJPUElDX0JBU0VfVVJMIjoiaHR0cHM6Ly9hcGkuYW50aHJvcGljLmNvbS92MSIsIkFOVEhST1BJQ19NT0RFTCI6ImNsYXVkZS1zb25uZXQtNC41In19', this)">
+                            馃搵 澶嶅埗閾炬帴
+                        </button>
+                    </div>
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">// 瑙ｇ爜鍚庣殑閰嶇疆鍐呭:</div>
+                        {<br>
+                        &nbsp;&nbsp;"env": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_BASE_URL": "https://api.anthropic.com/v1",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"ANTHROPIC_MODEL": "claude-sonnet-4.5"<br>
+                        &nbsp;&nbsp;}<br>
+                        }<br>
+                        <div style="color: #f39c12; margin-top: 8px;">// URL 鍙傛暟瑕嗙洊: apiKey=sk-ant-my-new-key</div>
+                    </div>
+                    <div
+                        style="margin-top: 12px; padding: 10px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; font-size: 13px;">
+                        <strong>浼樺厛绾ц鍒?</strong> URL 鍙傛暟 (apiKey) > 閰嶇疆鏂囦欢 (endpoint, model)
+                    </div>
+                </div>
+
+                <!-- Codex TOML 閰嶇疆瀵煎叆 -->
+                <div class="link-card">
+                    <h3>
+                        <span class="app-badge badge-codex">Codex</span>
+                        TOML 鏍煎紡閰嶇疆瀵煎叆
+                    </h3>
+                    <p class="description">
+                        Codex 浣跨敤 TOML 鏍煎紡鐨勯厤缃枃浠?鍖呭惈 auth 鍜?config 涓ら儴鍒嗐€?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> name, config<br>
+                        <span class="param-tag optional">鍙€?/span> <strong>configFormat=json</strong> (Codex 閰嶇疆涓?JSON
+                        鍖呰鐨?TOML)
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=provider&app=codex&name=OpenAI%20Complete&configFormat=json&config=eyJhdXRoIjp7Ik9QRU5BSV9BUElfS0VZIjoic2stcHJvai10ZXN0LWtleTEyMyJ9LCJjb25maWciOiJbbW9kZWxfcHJvdmlkZXJzLm9wZW5haV1cbmJhc2VfdXJsID0gXCJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxXCJcblxuW2dlbmVyYWxdXG5tb2RlbCA9IFwiZ3B0LTUuMVwiIn0="
+                            class="deep-link">
+                            馃摜 瀵煎叆 Codex 閰嶇疆
+                        </a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=provider&app=codex&name=OpenAI%20Complete&configFormat=json&config=eyJhdXRoIjp7Ik9QRU5BSV9BUElfS0VZIjoic2stcHJvai10ZXN0LWtleTEyMyJ9LCJjb25maWciOiJbbW9kZWxfcHJvdmlkZXJzLm9wZW5haV1cbmJhc2VfdXJsID0gXCJodHRwczovL2FwaS5vcGVuYWkuY29tL3YxXCJcblxuW2dlbmVyYWxdXG5tb2RlbCA9IFwiZ3B0LTUuMVwiIn0=', this)">
+                            馃搵 澶嶅埗閾炬帴
+                        </button>
+                    </div>
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">// 瑙ｇ爜鍚庣殑閰嶇疆鍐呭:</div>
+                        {<br>
+                        &nbsp;&nbsp;"auth": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"OPENAI_API_KEY": "sk-proj-test-key123"<br>
+                        &nbsp;&nbsp;},<br>
+                        &nbsp;&nbsp;"config": "[model_providers.openai]\nbase_url =
+                        \"https://api.openai.com/v1\"\n\n[general]\nmodel = \"gpt-5.1\""<br>
+                        }
+                        <div style="color: #95a5a6; margin-top: 12px; margin-bottom: 4px;">// config 瀛楁瑙ｆ瀽 (TOML):</div>
+                        <div style="color: #a8d08d;">[model_providers.openai]</div>
+                        <div style="color: #a8d08d;">base_url = "https://api.openai.com/v1"</div>
+                        <div style="color: #a8d08d; margin-top: 8px;">[general]</div>
+                        <div style="color: #a8d08d;">model = "gpt-5.1"</div>
+                    </div>
+                </div>
+
+                <!-- Gemini 閰嶇疆瀵煎叆 -->
+                <div class="link-card">
+                    <h3>
+                        <span class="app-badge badge-gemini">Gemini</span>
+                        Gemini 閰嶇疆瀵煎叆
+                    </h3>
+                    <p class="description">
+                        Gemini 浣跨敤鎵佸钩鐨勭幆澧冨彉閲忔牸寮?绠€娲佹槑浜嗐€?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> name, config<br>
+                        <span class="param-tag optional">鍙€?/span> <strong>configFormat=json</strong>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=provider&app=gemini&name=Google%20Gemini&configFormat=json&config=eyJHRU1JTklfQVBJX0tFWSI6IkFJemFTeUR0ZXN0a2V5MTIzIiwiR0VNSU5JX0JBU0VfVVJMIjoiaHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhIiwiR0VNSU5JX01PREVMIjoiZ2VtaW5pLTMtcHJvLXByZXZpZXcifQ=="
+                            class="deep-link">
+                            馃摜 瀵煎叆 Gemini 閰嶇疆
+                        </a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=provider&app=gemini&name=Google%20Gemini&configFormat=json&config=eyJHRU1JTklfQVBJX0tFWSI6IkFJemFTeUR0ZXN0a2V5MTIzIiwiR0VNSU5JX0JBU0VfVVJMIjoiaHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhIiwiR0VNSU5JX01PREVMIjoiZ2VtaW5pLTMtcHJvLXByZXZpZXcifQ==', this)">
+                            馃搵 澶嶅埗閾炬帴
+                        </button>
+                    </div>
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">// 瑙ｇ爜鍚庣殑閰嶇疆鍐呭:</div>
+                        {<br>
+                        &nbsp;&nbsp;"GEMINI_API_KEY": "AIzaSyDtestkey123",<br>
+                        &nbsp;&nbsp;"GEMINI_BASE_URL": "https://generativelanguage.googleapis.com/v1beta",<br>
+                        &nbsp;&nbsp;"GEMINI_MODEL": "gemini-3-pro-preview"<br>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MCP銆丳rompt銆丼kill 绀轰緥 -->
+            <div class="section">
+                <h2>馃攲 MCP Servers 瀵煎叆 <span class="version-badge">v3.8+</span></h2>
+
+                <div class="link-card">
+                    <h3>馃摝馃摝 JSON 閰嶇疆绀轰緥 - 鎵归噺瀵煎叆澶氫釜 MCP Servers</h3>
+                    <p class="description">
+                        涓€娆℃€у鍏ュ涓?MCP 鏈嶅姟鍣?(Context7 + Sequential-thinking)銆?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> resource=mcp, apps, config (Base64)<br>
+                        <span class="param-tag optional">鍙€?/span> enabled
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=mcp&apps=claude,codex&config=eyJtY3BTZXJ2ZXJzIjp7ImNvbnRleHQ3Ijp7ImNvbW1hbmQiOiJidW54IiwiYXJncyI6WyIteSIsIkB1cHN0YXNoL2NvbnRleHQ3LW1jcCIsIi0tYXBpLWtleSIsImN0eDdzay00ZGRkNGY2Ni1lNzUyLTQwMjItYjFmNi1jOGNmNjI3OWI4MGQiXSwiZW52Ijp7fX0sInNlcXVlbnRpYWwtdGhpbmtpbmciOnsiY29tbWFuZCI6Im5weCIsImFyZ3MiOlsiLXkiLCJAbW9kZWxjb250ZXh0cHJvdG9jb2wvc2VydmVyLXNlcXVlbnRpYWwtdGhpbmtpbmciXSwiZW52Ijp7fX19fQ==&enabled=true"
+                            class="deep-link">馃摜 鎵归噺瀵煎叆 2 涓?MCP Servers</a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=mcp&apps=claude,codex&config=eyJtY3BTZXJ2ZXJzIjp7ImNvbnRleHQ3Ijp7ImNvbW1hbmQiOiJidW54IiwiYXJncyI6WyIteSIsIkB1cHN0YXNoL2NvbnRleHQ3LW1jcCIsIi0tYXBpLWtleSIsImN0eDdzay00ZGRkNGY2Ni1lNzUyLTQwMjItYjFmNi1jOGNmNjI3OWI4MGQiXSwiZW52Ijp7fX0sInNlcXVlbnRpYWwtdGhpbmtpbmciOnsiY29tbWFuZCI6Im5weCIsImFyZ3MiOlsiLXkiLCJAbW9kZWxjb250ZXh0cHJvdG9jb2wvc2VydmVyLXNlcXVlbnRpYWwtdGhpbmtpbmciXSwiZW52Ijp7fX19fQ==&enabled=true', this)">馃搵
+                            澶嶅埗</button>
+                    </div>
+
+                    <!-- JSON 閰嶇疆灞曠ず -->
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">馃摝 鎵归噺 MCP 閰嶇疆 JSON:</div>
+                        <pre style="margin: 0; color: #a8d08d; line-height: 1.6;">{
+  "mcpServers": {
+    "context7": {
+      "command": "bunx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp",
+        "--api-key",
+        "ctx7sk-4ddd4f66-e752-4022-b1f6-c8cf6279b80d"
+      ],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {}
+    }
+  }
+}</pre>
+                        <div style="color: #95a5a6; margin-top: 8px; padding-top: 8px; border-top: 1px solid #34495e;">
+                            馃挕 <strong>鎵归噺瀵煎叆璇存槑</strong>: 涓€娆℃€у鍏?2 涓?MCP 鏈嶅姟鍣?br>
+                            馃摝 <strong>鏈嶅姟鍣?1</strong>: context7 - Upstash Context7 MCP 鏈嶅姟鍣?br>
+                            馃摝 <strong>鏈嶅姟鍣?2</strong>: sequential-thinking - 缁撴瀯鍖栨€濈淮鎺ㄧ悊鏈嶅姟鍣?br>
+                            馃幆 <strong>鐩爣搴旂敤</strong>: Claude 鍜?Codex<br>
+                            馃攧 <strong>鏅鸿兘鍚堝苟</strong>: 濡傛灉鏈嶅姟鍣ㄥ凡瀛樺湪锛屽彧鏇存柊搴旂敤鍚敤鐘舵€侊紝涓嶈鐩栭厤缃?                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prompt 瀵煎叆绀轰緥 -->
+            <div class="section">
+                <h2>馃挰 Prompt 瀵煎叆 <span class="version-badge">v3.8+</span></h2>
+
+                <div class="link-card">
+                    <h3><span class="app-badge badge-claude">Claude</span> 浠ｇ爜瀹℃煡涓撳</h3>
+                    <p class="description">涓?Claude 瀵煎叆浠ｇ爜瀹℃煡鎻愮ず璇嶃€?/p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=prompt&app=claude&name=浠ｇ爜瀹℃煡涓撳&content=IyDku6PnoIHlrqHmn6XkuJPlrrYKCuS9oOaYr+S4gOS9jeaciee7j+mqjOeahOS7o+eggeWuoeafpeWRmO+8jOivt+WcqOS7o+eggeWuoeafpeWbnuWkjeeahOaXtuWAmeWBmuWQr+S4i+OAgg==&description=涓撴敞浠ｇ爜璐ㄩ噺&enabled=true"
+                            class="deep-link">馃摜 瀵煎叆</a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=prompt&app=claude&name=浠ｇ爜瀹℃煡涓撳&content=IyDku6PnoIHlrqHmn6XkuJPlrrYKCuS9oOaYr+S4gOS9jeaciee7j+mqjOeahOS7o+eggeWuoeafpeWRmO+8jOivt+WcqOS7o+eggeWuoeafpeWbnuWkjeeahOaXtuWAmeWBmuWQr+S4i+OAgg==&description=涓撴敞浠ｇ爜璐ㄩ噺&enabled=true', this)">馃搵
+                            澶嶅埗</button>
+                    </div>
+
+                    <!-- 鍐呭瑙ｉ噴 -->
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">馃摑 Prompt 鍐呭:</div>
+                        <div style="color: #a8d08d; white-space: pre-wrap; line-height: 1.6;"># 浠ｇ爜瀹℃煡涓撳
+
+                            浣犳槸涓€浣嶆湁缁忛獙鐨勪唬鐮佸鏌ュ憳锛岃鍦ㄤ唬鐮佸鏌ュ洖澶嶇殑鏃跺€欏仛鍚笅銆?/div>
+                        <div style="color: #95a5a6; margin-top: 12px; padding-top: 8px; border-top: 1px solid #34495e;">
+                            鈥?<strong>搴旂敤</strong>: Claude<br>
+                            鈥?<strong>鎻忚堪</strong>: 涓撴敞浠ｇ爜璐ㄩ噺<br>
+                            鈥?<strong>鐘舵€?/strong>: 瀵煎叆鍚庣珛鍗冲惎鐢?                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skill 瀵煎叆绀轰緥 -->
+            <div class="section">
+                <h2>馃洜锔?Skill 浠撳簱瀵煎叆 <span class="version-badge">v3.8+</span></h2>
+
+                <div class="link-card">
+                    <h3>娣诲姞 Claude Skill 浠撳簱</h3>
+                    <p class="description">
+                        浠?GitHub 浠撳簱瀵煎叆 Claude Skills锛屾敮鎸佹寚瀹氬垎鏀拰瀛愮洰褰曡矾寰勩€?                    </p>
+                    <div class="param-list">
+                        <span class="param-tag">蹇呴渶</span> resource=skill, repo (owner/name)<br>
+                        <span class="param-tag optional">鍙€?/span> branch, skills_path, directory
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <a href="guyumate://v1/import?resource=skill&repo=example/claude-skills&branch=main&skills_path=skills&directory=my-skills"
+                            class="deep-link">
+                            馃摜 瀵煎叆 Skill 浠撳簱绀轰緥
+                        </a>
+                        <button class="deep-link"
+                            style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); cursor: pointer; border: none;"
+                            onclick="copyDeepLink('guyumate://v1/import?resource=skill&repo=example/claude-skills&branch=main&skills_path=skills&directory=my-skills', this)">
+                            馃搵 澶嶅埗閾炬帴
+                        </button>
+                    </div>
+
+                    <!-- 鍐呭瑙ｉ噴 -->
+                    <div class="code-block"
+                        style="margin-top: 12px; padding: 12px; background: #2c3e50; color: #ecf0f1; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                        <div style="color: #95a5a6; margin-bottom: 8px;">馃梻锔?灏嗘坊鍔犱互涓?Skill 浠撳簱:</div>
+                        <div style="color: #52c41a; margin-bottom: 4px;">鈥?<strong>GitHub 浠撳簱</strong>:
+                            example/claude-skills</div>
+                        <div style="color: #a8d08d; margin-bottom: 4px;">鈥?<strong>鍒嗘敮</strong>: main (榛樿鍒嗘敮)</div>
+                        <div style="color: #a8d08d; margin-bottom: 4px;">鈥?<strong>Skills 璺緞</strong>: skills
+                            (浠撳簱涓妧鑳芥枃浠舵墍鍦ㄧ殑瀛愮洰褰?</div>
+                        <div style="color: #a8d08d; margin-bottom: 4px;">鈥?<strong>鏈湴鐩綍</strong>: my-skills (鍏嬮殕鍒版湰鍦扮殑鐩綍鍚?
+                        </div>
+                        <div style="color: #95a5a6; margin-top: 12px; padding-top: 8px; border-top: 1px solid #34495e;">
+                            馃挕 <strong>璇存槑</strong>: 姝ゆ搷浣滀細鎶婁粨搴撴坊鍔犲埌 Skill 鍒楄〃涓€傛坊鍔犲悗锛屾偍鍙互鍦?Skills 绠＄悊鐣岄潰閫夋嫨瀹夎鍏蜂綋鐨勬妧鑳芥枃浠躲€?br>
+                            馃敡 <strong>搴旂敤</strong>: Claude (Skills 鍔熻兘浠呮敮鎸?Claude)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--  娣遍摼鎺ョ敓鎴愬櫒 -->
+            <div class="section">
+                <h2>馃殌 娣遍摼鎺ョ敓鎴愬櫒</h2>
+                <p style="color: #7f8c8d; margin-bottom: 24px;">
+                    濉啓鍙傛暟淇℃伅锛岃嚜鍔ㄧ敓鎴愭繁閾炬帴骞跺鍏ュ埌 GuYu Mate
+                </p>
+                <!-- MCP Servers 鐢熸垚鍣?-->
+                <div class="generator-section">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">馃攲 MCP Servers 瀵煎叆鐢熸垚鍣?/h3>
+
+                    <div class="form-group">
+                        <label>鐩爣搴旂敤 *</label>
+                        <input type="text" id="mcpApps" placeholder="渚嬪: claude,codex,gemini 鎴?claude" />
+                        <small style="color: #7f8c8d;">澶氫釜搴旂敤鐢ㄩ€楀彿鍒嗛殧</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>MCP 閰嶇疆 (JSON) *</label>
+                        <textarea id="mcpConfig" rows="8" placeholder='{
+  "mcpServers": {
+    "server-name": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-xxx"],
+      "type": "stdio"
+    }
+  }
+}'></textarea>
+                        <small style="color: #7f8c8d;">瀹屾暣鐨?MCP 閰嶇疆 JSON</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鏄惁鍚敤</label>
+                        <select id="mcpEnabled">
+                            <option value="true">鏄?(enabled=true)</option>
+                            <option value="false">鍚?(enabled=false)</option>
+                        </select>
+                    </div>
+
+                    <button class="btn" onclick="generateMcpLink()">馃幆 鐢熸垚 MCP 娣遍摼鎺?/button>
+
+                    <div id="mcpResult" class="result-section" style="display: none;">
+                        <label>鐢熸垚鐨勬繁閾炬帴锛?/label>
+                        <div class="result-url" id="mcpUrl" onclick="selectText(this)"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 12px;">
+                            <button class="btn" onclick="copyGeneratedLink('mcpUrl')">馃搵 澶嶅埗閾炬帴</button>
+                            <a id="mcpImportBtn" class="btn"
+                                style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); text-decoration: none;">
+                                馃摜 绔嬪嵆瀵煎叆
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prompt 鐢熸垚鍣?-->
+                <div class="generator-section">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">馃挰 Prompt 瀵煎叆鐢熸垚鍣?/h3>
+
+                    <div class="form-group">
+                        <label>鐩爣搴旂敤 *</label>
+                        <select id="promptApp">
+                            <option value="claude">Claude</option>
+                            <option value="codex">Codex</option>
+                            <option value="gemini">Gemini</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鎻愮ず璇嶅悕绉?*</label>
+                        <input type="text" id="promptName" placeholder="渚嬪: 浠ｇ爜瀹℃煡涓撳" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>鎻愮ず璇嶅唴瀹?*</label>
+                        <textarea id="promptContent" rows="6" placeholder="# 瑙掕壊瀹氫箟
+
+浣犳槸涓€浣嶄笓涓氱殑..."></textarea>
+                        <small style="color: #7f8c8d;">鏀寔 Markdown 鏍煎紡锛岃嚜鍔?Base64 缂栫爜</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鎻忚堪</label>
+                        <input type="text" id="promptDescription" placeholder="渚嬪: 涓撴敞浠ｇ爜璐ㄩ噺" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>瀵煎叆鍚庢槸鍚﹀惎鐢?/label>
+                        <select id="promptEnabled">
+                            <option value="true">鏄?(灏嗙鐢ㄥ叾浠栨彁绀鸿瘝)</option>
+                            <option value="false">鍚?(淇濇寔绂佺敤鐘舵€?</option>
+                        </select>
+                    </div>
+
+                    <button class="btn" onclick="generatePromptLink()">馃幆 鐢熸垚 Prompt 娣遍摼鎺?/button>
+
+                    <div id="promptResult" class="result-section" style="display: none;">
+                        <label>鐢熸垚鐨勬繁閾炬帴锛?/label>
+                        <div class="result-url" id="promptUrl" onclick="selectText(this)"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 12px;">
+                            <button class="btn" onclick="copyGeneratedLink('promptUrl')">馃搵 澶嶅埗閾炬帴</button>
+                            <a id="promptImportBtn" class="btn"
+                                style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); text-decoration: none;">
+                                馃摜 绔嬪嵆瀵煎叆
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skill 鐢熸垚鍣?-->
+                <div class="generator-section">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">馃洜锔?Skill 浠撳簱瀵煎叆鐢熸垚鍣?/h3>
+
+                    <div class="form-group">
+                        <label>GitHub 浠撳簱 *</label>
+                        <input type="text" id="skillRepo" placeholder="渚嬪: owner/repo-name" />
+                        <small style="color: #7f8c8d;">鏍煎紡: 鎵€鏈夎€?浠撳簱鍚?/small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鍒嗘敮</label>
+                        <input type="text" id="skillBranch" placeholder="main" value="main" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Skills 璺緞</label>
+                        <input type="text" id="skillPath" placeholder="skills" value="skills" />
+                        <small style="color: #7f8c8d;">浠撳簱涓妧鑳芥枃浠舵墍鍦ㄧ殑瀛愮洰褰?/small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鏈湴鐩綍鍚?/label>
+                        <input type="text" id="skillDirectory" placeholder="my-skills" />
+                        <small style="color: #7f8c8d;">鍏嬮殕鍒版湰鍦扮殑鐩綍鍚嶏紙鍙€夛級</small>
+                    </div>
+
+                    <button class="btn" onclick="generateSkillLink()">馃幆 鐢熸垚 Skill 娣遍摼鎺?/button>
+
+                    <div id="skillResult" class="result-section" style="display: none;">
+                        <label>鐢熸垚鐨勬繁閾炬帴锛?/label>
+                        <div class="result-url" id="skillUrl" onclick="selectText(this)"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 12px;">
+                            <button class="btn" onclick="copyGeneratedLink('skillUrl')">馃搵 澶嶅埗閾炬帴</button>
+                            <a id="skillImportBtn" class="btn"
+                                style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%); text-decoration: none;">
+                                馃摜 绔嬪嵆瀵煎叆
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Base64 缂栬В鐮佸櫒 -->
+            <div class="section">
+                <h2>馃攼 Base64 缂栬В鐮佸櫒</h2>
+
+                <div class="generator-section" style="background: #f5f5f5; border: 2px solid #95a5a6;">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">缂栫爜鍣?(UTF-8 鈫?Base64)</h3>
+                    <div class="form-group">
+                        <label>鍘熷鍐呭锛圲TF-8 鏂囨湰锛?/label>
+                        <textarea id="encodeInput" rows="6" placeholder="杈撳叆瑕佺紪鐮佺殑鏂囨湰...&#10;鏀寔涓枃銆丣SON銆乀OML 绛夋墍鏈?UTF-8 瀛楃"
+                            style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <button class="btn" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);"
+                        onclick="encodeToBase64()">
+                        馃敀 缂栫爜涓?Base64
+                    </button>
+                    <div id="encodeResult" style="display: none;" class="result-box">
+                        <strong>鉁?缂栫爜缁撴灉锛?/strong>
+                        <div class="result-text" id="encodeOutput"></div>
+                        <button class="btn btn-copy" onclick="copyEncoded()">馃搵 澶嶅埗缁撴灉</button>
+                        <small style="color: #7f8c8d; display: block; margin-top: 8px;">
+                            馃挕 鍙洿鎺ョ敤浜庢繁閾炬帴鐨?config 鎴?content 鍙傛暟
+                        </small>
+                    </div>
+                </div>
+
+                <div class="generator-section"
+                    style="background: #f0f9ff; border: 2px solid #3498db; margin-top: 24px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 16px;">瑙ｇ爜鍣?(Base64 鈫?UTF-8)</h3>
+                    <div class="form-group">
+                        <label>Base64 缂栫爜鍐呭</label>
+                        <textarea id="decodeInput" rows="6"
+                            placeholder="绮樿创 Base64 缂栫爜鐨勬枃鏈?..&#10;渚嬪: eyJlbnYiOnsiaGVsbG8iOiJ3b3JsZCJ9fQ=="
+                            style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <button class="btn" style="background: linear-gradient(135deg, #27ae60 0%, #229954 100%);"
+                        onclick="decodeFromBase64()">
+                        馃敁 瑙ｇ爜涓烘枃鏈?                    </button>
+                    <div id="decodeResult" style="display: none;" class="result-box">
+                        <strong>鉁?瑙ｇ爜缁撴灉锛?/strong>
+                        <div class="result-text" id="decodeOutput" style="white-space: pre-wrap;"></div>
+                        <button class="btn btn-copy" onclick="copyDecoded()">馃搵 澶嶅埗缁撴灉</button>
+                        <div id="jsonFormat" style="display: none; margin-top: 12px;">
+                            <button class="btn" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);"
+                                onclick="formatJson()">
+                                鉁?鏍煎紡鍖?JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 24px; background: #e8f4f8; border-left: 4px solid #3498db;">
+                    <h4 style="color: #2c3e50;">馃挕 浣跨敤寤鸿</h4>
+                    <ul style="color: #2c3e50;">
+                        <li><strong>缂栫爜閰嶇疆鏂囦欢</strong>锛氬皢 JSON 鎴?TOML 鍐呭缂栫爜鍚庣敤浜?config 鍙傛暟</li>
+                        <li><strong>缂栫爜 Prompt</strong>锛氬皢 Markdown 鎻愮ず璇嶅唴瀹圭紪鐮佸悗鐢ㄤ簬 content 鍙傛暟</li>
+                        <li><strong>楠岃瘉娣遍摼鎺?/strong>锛氳В鐮侀獙璇佹繁閾炬帴涓殑閰嶇疆鍐呭鏄惁姝ｇ‘</li>
+                        <li><strong>UTF-8 鏀寔</strong>锛氬畬鏁存敮鎸佷腑鏂囧強鍏朵粬 Unicode 瀛楃</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 娉ㄦ剰浜嬮」 -->
+            <div class="info-box">
+                <h4>鈿狅笍 浣跨敤娉ㄦ剰浜嬮」</h4>
+                <ul>
+                    <li><strong>棣栨鐐瑰嚮</strong>锛氭祻瑙堝櫒浼氳闂槸鍚﹀厑璁告墦寮€ GuYu Mate锛岃鐐瑰嚮"鍏佽"鎴?鎵撳紑"</li>
+                    <li><strong>macOS 鐢ㄦ埛</strong>锛氬彲鑳介渶瑕佸湪"绯荤粺璁剧疆" 鈫?"闅愮涓庡畨鍏ㄦ€?涓厑璁稿簲鐢?/li>
+                    <li><strong>娴嬭瘯 API Key</strong>锛氱ず渚嬩腑鐨?API Key 浠呯敤浜庢祴璇曟牸寮忥紝鏃犳硶瀹為檯浣跨敤</li>
+                    <li><strong>瀵煎叆纭</strong>锛氱偣鍑婚摼鎺ュ悗浼氬脊鍑虹‘璁ゅ璇濇锛孉PI Key 浼氳鎺╃爜鏄剧ず锛堝墠4浣?****锛?/li>
+                    <li><strong>缂栬緫閰嶇疆</strong>锛氬鍏ュ悗鍙互鍦?GuYu Mate 涓殢鏃剁紪杈戞垨鍒犻櫎閰嶇疆</li>
+                </ul>
+            </div>
+
+            <!-- 娣遍摼鎺ヨВ鏋愬櫒 -->
+            <div class="generator-section" style="background: #f0f9ff; border: 2px solid #3498db;">
+                <h2>馃攳 娣遍摼鎺ヨВ鏋愬櫒</h2>
+                <p style="color: #7f8c8d; margin-bottom: 24px;">绮樿创娣遍摼鎺?URL锛屾煡鐪嬭В鏋愮粨鏋?/p>
+
+                <div class="form-group">
+                    <label>娣遍摼鎺?URL</label>
+                    <textarea id="parseUrl" rows="3" placeholder="绮樿创瀹屾暣鐨?guyumate:// 娣遍摼鎺?.."
+                        style="font-family: monospace; font-size: 13px;"></textarea>
+                </div>
+
+                <button class="btn" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);"
+                    onclick="parseDeepLink()">
+                    馃攳 瑙ｆ瀽娣遍摼鎺?                </button>
+
+                <!-- 瑙ｆ瀽缁撴灉 -->
+                <div id="parseResult" style="display: none;">
+                    <div class="result-box" style="margin-top: 20px;">
+                        <strong>鉁?瑙ｆ瀽缁撴灉锛?/strong>
+
+                        <!-- 鍩烘湰淇℃伅 -->
+                        <div id="parseBasicInfo" style="margin-top: 16px;"></div>
+
+                        <!-- URL 鍙傛暟 -->
+                        <div id="parseUrlParams" style="margin-top: 16px;"></div>
+
+                        <!-- 閰嶇疆鏂囦欢瑙ｆ瀽 -->
+                        <div id="parseConfigContent" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 娣遍摼鎺ョ敓鎴愬櫒 -->
+            <div class="generator-section">
+                <h2>馃洜锔?娣遍摼鎺ョ敓鎴愬櫒</h2>
+                <p style="color: #7f8c8d; margin-bottom: 24px;">濉啓涓嬫柟琛ㄥ崟锛岀敓鎴愭偍鑷繁鐨勬繁閾炬帴</p>
+
+                <!-- 瀵煎叆妯″紡鍒囨崲 -->
+                <div class="form-group">
+                    <label>瀵煎叆妯″紡</label>
+                    <select id="importMode" onchange="toggleImportMode()">
+                        <option value="url">URL 鍙傛暟妯″紡锛堜紶缁燂級</option>
+                        <option value="config">閰嶇疆鏂囦欢妯″紡锛坴3.8+锛?/option>
+                    </select>
+                    <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                        URL 鍙傛暟妯″紡锛氱洿鎺ュ湪 URL 涓紶閫掑弬鏁?| 閰嶇疆鏂囦欢妯″紡锛氫娇鐢?Base64 缂栫爜鐨?JSON/TOML
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>搴旂敤绫诲瀷 *</label>
+                    <select id="app" onchange="updateModelFields()">
+                        <option value="claude">Claude Code</option>
+                        <option value="codex">Codex</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>渚涘簲鍟嗗悕绉?*</label>
+                    <input type="text" id="name" placeholder="渚嬪: Claude Official">
+                    <small style="color: #e74c3c; font-size: 12px; display: block; margin-top: 4px;">
+                        鈿狅笍 鍞竴蹇呭～椤?                    </small>
+                </div>
+
+                <!-- URL 鍙傛暟妯″紡瀛楁 -->
+                <div id="urlModeFields">
+                    <div class="form-group">
+                        <label>瀹樼綉鍦板潃</label>
+                        <input type="url" id="homepage" placeholder="https://example.com锛堝彲閫夛紝閰嶇疆鏂囦欢妯″紡鍙嚜鍔ㄦ帹鏂級">
+                    </div>
+
+                    <div class="form-group">
+                        <label>API 绔偣</label>
+                        <input type="url" id="endpoint" placeholder="https://api.example.com/v1锛堥厤缃枃浠舵ā寮忓彲浠庨厤缃彁鍙栵級">
+                        <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                            涓?API 绔偣鍦板潃
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>澶囩敤 API 绔偣锛堝彲閫夛紝閫楀彿鍒嗛殧锛?/label>
+                        <input type="text" id="extraEndpoints" placeholder="https://api2.example.com/v1, https://api3.example.com/v1">
+                        <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                            澶氫釜澶囩敤绔偣鐢ㄩ€楀彿鍒嗛殧锛屽鍏ュ悗鑷姩娣诲姞涓鸿嚜瀹氫箟绔偣
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="text" id="apiKey" placeholder="sk-xxxxx 鎴?AIzaSyXXXXX锛堥厤缃枃浠舵ā寮忓彲浠庨厤缃彁鍙栵級">
+                    </div>
+                </div>
+
+                <!-- 閰嶇疆鏂囦欢妯″紡瀛楁 -->
+                <div id="configModeFields" style="display: none;">
+                    <!-- 閫氱敤/Claude/Gemini JSON 閰嶇疆 -->
+                    <div id="generalConfigGroup" class="form-group">
+                        <label id="configJsonLabel">閰嶇疆鏂囦欢鍐呭锛圝SON锛?/label>
+                        <textarea id="configJson" rows="12"
+                            placeholder='杈撳叆 JSON 閰嶇疆锛屼緥濡傦細&#10;{&#10;  "env": {&#10;    "ANTHROPIC_AUTH_TOKEN": "sk-ant-xxx",&#10;    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/v1",&#10;    "ANTHROPIC_MODEL": "claude-sonnet-4.5"&#10;  }&#10;}'></textarea>
+                        <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                            閰嶇疆鏂囦欢灏嗚嚜鍔ㄨ繘琛?Base64 缂栫爜
+                        </small>
+                    </div>
+
+                    <!-- Codex 涓撶敤閰嶇疆瀛楁 -->
+                    <div id="codexConfigGroup" style="display: none;">
+                        <div class="form-group">
+                            <label>Codex 璁よ瘉淇℃伅 (JSON)</label>
+                            <textarea id="codexAuthJson" rows="5"
+                                placeholder='{&#10;  "auth": {&#10;    "OPENAI_API_KEY": "sk-..."&#10;  }&#10;}'></textarea>
+                            <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                                鍖呭惈 API Key 鐨勮璇佷俊鎭?JSON 瀵硅薄
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label>Codex 閰嶇疆鏂囦欢 (TOML)</label>
+                            <textarea id="codexConfigToml" rows="10"
+                                placeholder='[model_providers.openai]&#10;base_url = "..."&#10;&#10;[general]&#10;model = "..."'
+                                style="font-family: monospace;"></textarea>
+                            <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                                config.toml 鐨勫師濮嬪唴瀹?                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL 鍙傛暟瑕嗙洊锛堝彲閫夛級</label>
+                        <div style="background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                            <p style="font-size: 12px; color: #856404; margin: 0;">
+                                馃挕 鍙互鍦ㄤ笅鏂瑰～鍐?API Key銆佺鐐圭瓑鍙傛暟鏉ヨ鐩栭厤缃枃浠朵腑鐨勫€笺€傜暀绌哄垯瀹屽叏浣跨敤閰嶇疆鏂囦欢銆?                            </p>
+                        </div>
+                        <input type="text" id="overrideApiKey" placeholder="瑕嗙洊閰嶇疆鏂囦欢涓殑 API Key锛堝彲閫夛級">
+                        <input type="url" id="overrideEndpoint" placeholder="瑕嗙洊閰嶇疆鏂囦欢涓殑绔偣锛堝彲閫夛級" style="margin-top: 8px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>榛樿妯″瀷锛堝彲閫夛級</label>
+                    <input type="text" id="model" placeholder="渚嬪: claude-haiku-4.1, gpt-5.1, gemini-3-pro-preview">
+                    <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                        閫氱敤妯″瀷瀛楁锛岄€傜敤浜庢墍鏈夊簲鐢ㄧ被鍨?                    </small>
+                </div>
+
+                <!-- Claude 涓撶敤瀛楁 -->
+                <div id="claudeFields" style="display: block;">
+                    <div style="background: #e8f4f8; padding: 16px; border-radius: 8px; margin: 16px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 12px; font-size: 14px;">
+                            馃搵 Claude 涓撶敤妯″瀷瀛楁锛堝彲閫夛級
+                        </h4>
+                        <p style="color: #7f8c8d; font-size: 12px; margin-bottom: 12px;">
+                            鍙互鏍规嵁闇€瑕佽缃壒瀹氱殑妯″瀷瀛楁锛岃繖浜涘瓧娈典粎鍦?Claude 搴旂敤涓敓鏁?                        </p>
+
+                        <div class="form-group">
+                            <label>Haiku 妯″瀷</label>
+                            <input type="text" id="haikuModel" placeholder="claude-haiku-4.1">
+                            <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                                瀵瑰簲鐜鍙橀噺锛欰NTHROPIC_DEFAULT_HAIKU_MODEL
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sonnet 妯″瀷</label>
+                            <input type="text" id="sonnetModel" placeholder="claude-sonnet-4.5">
+                            <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                                瀵瑰簲鐜鍙橀噺锛欰NTHROPIC_DEFAULT_SONNET_MODEL
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Opus 妯″瀷</label>
+                            <input type="text" id="opusModel" placeholder="claude-opus-4">
+                            <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                                瀵瑰簲鐜鍙橀噺锛欰NTHROPIC_DEFAULT_OPUS_MODEL
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>鍥炬爣锛堝彲閫夛級</label>
+                    <input type="text" id="icon" placeholder="渚嬪: openai, anthropic, google">
+                    <small style="color: #7f8c8d; font-size: 12px; display: block; margin-top: 4px;">
+                        鍥炬爣鍚嶇О锛岀敤浜庡湪鐣岄潰涓樉绀?                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label>瀵煎叆鍚庢槸鍚﹁涓哄綋鍓嶄緵搴斿晢</label>
+                    <select id="enabled">
+                        <option value="true">鏄?(绔嬪嵆鍒囨崲鍒版渚涘簲鍟?</option>
+                        <option value="false">鍚?(浠呮坊鍔狅紝涓嶅垏鎹?</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>澶囨敞锛堝彲閫夛級</label>
+                    <textarea id="notes" rows="2" placeholder="渚嬪: 鍏徃涓撶敤璐﹀彿"></textarea>
+                </div>
+
+                <!-- 鐢ㄩ噺鏌ヨ閰嶇疆 (v3.9+) -->
+                <div style="background: #f0fff4; padding: 16px; border-radius: 8px; margin: 16px 0; border: 2px solid #27ae60;">
+                    <h4 style="color: #27ae60; margin-bottom: 12px; font-size: 14px;">
+                        馃搳 鐢ㄩ噺鏌ヨ閰嶇疆锛坴3.9+锛屽彲閫夛級
+                    </h4>
+                    <p style="color: #7f8c8d; font-size: 12px; margin-bottom: 12px;">
+                        閰嶇疆鐢ㄩ噺鏌ヨ鑴氭湰锛屽彲鑷姩鏌ヨ API 浣欓
+                    </p>
+
+                    <div class="form-group">
+                        <label>鍚敤鐢ㄩ噺鏌ヨ</label>
+                        <select id="usageEnabled">
+                            <option value="">涓嶉厤缃?/option>
+                            <option value="true">鍚敤</option>
+                            <option value="false">绂佺敤</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鐢ㄩ噺鏌ヨ Base URL</label>
+                        <input type="url" id="usageBaseUrl" placeholder="https://example.com锛堢敤浜庣敤閲忔煡璇㈢殑鍩虹 URL锛?>
+                        <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                            鐢ㄩ噺鏌ヨ鎺ュ彛鐨勫熀纭€鍦板潃锛屽繀椤讳笌鑴氭湰涓殑璇锋眰 URL 鍚屾簮
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鐢ㄩ噺鏌ヨ涓撶敤 API Key锛堝彲閫夛級</label>
+                        <input type="text" id="usageApiKey" placeholder="鐣欑┖鍒欎娇鐢ㄤ緵搴斿晢鐨?API Key">
+                    </div>
+
+                    <div class="form-group">
+                        <label>鐢ㄩ噺鏌ヨ鑴氭湰</label>
+                        <textarea id="usageScript" rows="12" style="font-family: monospace; font-size: 12px;"
+                            placeholder='({
+  request: {
+    url: "{{baseUrl}}/api/v1/user/subscription-info",
+    method: "GET",
+    headers: { "Authorization": "{{apiKey}}" }
+  },
+  extractor: function(response) {
+    const data = typeof response === "string" ? JSON.parse(response) : response;
+    return {
+      isValid: true,
+      remaining: data.balance ?? 0,
+      unit: "USD"
+    };
+  }
+})'></textarea>
+                        <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                            鏀寔妯℃澘鍙橀噺锛歿{baseUrl}}銆亄{apiKey}}銆亄{accessToken}}銆亄{userId}}
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>鑷姩鏌ヨ闂撮殧锛堝垎閽燂級</label>
+                        <input type="number" id="usageAutoInterval" placeholder="30" min="0">
+                        <small style="color: #7f8c8d; font-size: 11px; display: block; margin-top: 4px;">
+                            0 琛ㄧず绂佺敤鑷姩鏌ヨ
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Access Token锛堝彲閫夛級</label>
+                        <input type="text" id="usageAccessToken" placeholder="鏌愪簺 API 闇€瑕佺殑璁块棶浠ょ墝">
+                    </div>
+
+                    <div class="form-group">
+                        <label>User ID锛堝彲閫夛級</label>
+                        <input type="text" id="usageUserId" placeholder="鏌愪簺 API 闇€瑕佺殑鐢ㄦ埛 ID">
+                    </div>
+                </div>
+
+                <button class="btn" onclick="generateLink()">馃殌 鐢熸垚娣遍摼鎺?/button>
+
+                <div id="result" style="display: none;">
+                    <div class="result-box">
+                        <strong>鉁?鐢熸垚鐨勬繁閾炬帴锛?/strong>
+                        <div class="result-text" id="linkText"></div>
+                        <button class="btn btn-copy" onclick="copyLink()">馃搵 澶嶅埗閾炬帴</button>
+                        <a id="testLink" class="deep-link" style="text-decoration: none;">
+                            馃И 娴嬭瘯閾炬帴
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // UTF-8 瀛楃涓茶浆 Base64
+        function utf8_to_b64(str) {
+            try {
+                const bytes = new TextEncoder().encode(str);
+                const binString = Array.from(bytes, (byte) => String.fromCharCode(byte)).join("");
+                return btoa(binString);
+            } catch (e) {
+                console.error("Base64 encode error:", e);
+                return window.btoa(unescape(encodeURIComponent(str)));
+            }
+        }
+
+        // Base64 杞?UTF-8 瀛楃涓?        function b64_to_utf8(str) {
+            try {
+                const binString = atob(str);
+                const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+                return new TextDecoder().decode(bytes);
+            } catch (e) {
+                console.error("Base64 decode error:", e);
+                return decodeURIComponent(escape(window.atob(str)));
+            }
+        }
+
+        // 鍒囨崲瀵煎叆妯″紡
+        function toggleImportMode() {
+            const mode = document.getElementById('importMode').value;
+            const urlFields = document.getElementById('urlModeFields');
+            const configFields = document.getElementById('configModeFields');
+
+            if (mode === 'url') {
+                urlFields.style.display = 'block';
+                configFields.style.display = 'none';
+            } else {
+                urlFields.style.display = 'none';
+                configFields.style.display = 'block';
+                // 褰撳垏鎹㈠埌閰嶇疆鏂囦欢妯″紡鏃讹紝鑷姩濉厖绀轰緥閰嶇疆
+                populateConfigTemplate();
+            }
+        }
+
+        // ... (rest of the functions) ...
+
+        // 鏍规嵁搴旂敤绫诲瀷濉厖閰嶇疆妯℃澘
+        function populateConfigTemplate() {
+            const app = document.getElementById('app').value;
+            const configTextarea = document.getElementById('configJson');
+            const codexAuthTextarea = document.getElementById('codexAuthJson');
+            const codexConfigTextarea = document.getElementById('codexConfigToml');
+
+            let template = '';
+
+            if (app === 'claude') {
+                template = `{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sk-ant-your-api-key-here",
+    "ANTHROPIC_BASE_URL": "https://api.anthropic.com/v1",
+    "ANTHROPIC_MODEL": "claude-sonnet-4.5",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "claude-haiku-4.1",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4.5",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "claude-opus-4"
+  }
+}`;
+                configTextarea.value = template;
+            } else if (app === 'codex') {
+                // Codex 鍒嗗紑濉厖
+                codexAuthTextarea.value = `{
+  "auth": {
+    "OPENAI_API_KEY": "sk-proj-your-api-key-here"
+  }
+}`;
+                codexConfigTextarea.value = `model_provider = "custom"
+model = "gpt-5.1"
+model_reasoning_effort = "high"
+disable_response_storage = true
+
+[model_providers.custom]
+name = "custom"
+base_url = "https://api.openai.com/v1"
+wire_api = "responses"
+requires_openai_auth = true`;
+            } else if (app === 'gemini') {
+                template = `{
+  "GEMINI_API_KEY": "AIzaSy-your-api-key-here",
+  "GEMINI_BASE_URL": "https://generativelanguage.googleapis.com/v1beta",
+  "GEMINI_MODEL": "gemini-3-pro-preview"
+}`;
+                configTextarea.value = template;
+            }
+        }
+
+        // 鏇存柊妯″瀷瀛楁鏄剧ず
+        function updateModelFields() {
+            const app = document.getElementById('app').value;
+            const claudeFields = document.getElementById('claudeFields');
+            const generalConfigGroup = document.getElementById('generalConfigGroup');
+            const codexConfigGroup = document.getElementById('codexConfigGroup');
+            const mode = document.getElementById('importMode').value;
+
+            // Claude 瀛楁鏄剧ず鎺у埗
+            if (app === 'claude') {
+                claudeFields.style.display = 'block';
+            } else {
+                claudeFields.style.display = 'none';
+            }
+
+            // 閰嶇疆鏂囦欢杈撳叆妗嗘帶鍒?            if (mode === 'config') {
+                if (app === 'codex') {
+                    generalConfigGroup.style.display = 'none';
+                    codexConfigGroup.style.display = 'block';
+                } else {
+                    generalConfigGroup.style.display = 'block';
+                    codexConfigGroup.style.display = 'none';
+                }
+                populateConfigTemplate();
+            }
+        }
+
+        function generateLink() {
+            const mode = document.getElementById('importMode').value;
+            const app = document.getElementById('app').value;
+            const name = document.getElementById('name').value.trim();
+
+            // 楠岃瘉蹇呭～瀛楁锛堝彧鏈夊悕绉版槸蹇呭～鐨勶級
+            if (!name) {
+                alert('鉂?璇峰～鍐欎緵搴斿晢鍚嶇О锛?);
+                return;
+            }
+
+            // 鏋勫缓鍩虹鍙傛暟
+            const params = new URLSearchParams({
+                resource: 'provider',
+                app: app,
+                name: name
+            });
+
+            if (mode === 'url') {
+                // URL 鍙傛暟妯″紡
+                const homepage = document.getElementById('homepage').value.trim();
+                const endpoint = document.getElementById('endpoint').value.trim();
+                const apiKey = document.getElementById('apiKey').value.trim();
+                const model = document.getElementById('model').value.trim();
+                const icon = document.getElementById('icon').value.trim();
+                const enabled = document.getElementById('enabled').value;
+                const notes = document.getElementById('notes').value.trim();
+
+                // Claude 涓撶敤瀛楁
+                const haikuModel = document.getElementById('haikuModel').value.trim();
+                const sonnetModel = document.getElementById('sonnetModel').value.trim();
+                const opusModel = document.getElementById('opusModel').value.trim();
+
+                // URL 妯″紡涓嬶紝鑷冲皯闇€瑕?endpoint 鍜?apiKey
+                if (!endpoint || !apiKey) {
+                    alert('鉂?URL 鍙傛暟妯″紡涓嬶紝绔偣鍜?API Key 鏄繀濉殑锛?);
+                    return;
+                }
+
+                // 楠岃瘉 URL 鏍煎紡
+                if (homepage) {
+                    try {
+                        new URL(homepage);
+                    } catch (e) {
+                        alert('鉂?璇疯緭鍏ユ湁鏁堢殑瀹樼綉 URL 鏍煎紡锛堥渶鍖呭惈 http:// 鎴?https://锛夛紒');
+                        return;
+                    }
+                }
+
+                try {
+                    new URL(endpoint);
+                } catch (e) {
+                    alert('鉂?璇疯緭鍏ユ湁鏁堢殑绔偣 URL 鏍煎紡锛堥渶鍖呭惈 http:// 鎴?https://锛夛紒');
+                    return;
+                }
+
+                // 娣诲姞鍙傛暟
+                if (homepage) params.append('homepage', homepage);
+
+                // 鍚堝苟涓荤鐐瑰拰澶囩敤绔偣
+                const extraEndpoints = document.getElementById('extraEndpoints').value.trim();
+                let fullEndpoint = endpoint;
+                if (extraEndpoints) {
+                    const extras = extraEndpoints.split(',').map(e => e.trim()).filter(e => e);
+                    if (extras.length > 0) {
+                        fullEndpoint = endpoint + ',' + extras.join(',');
+                    }
+                }
+                params.append('endpoint', fullEndpoint);
+
+                params.append('apiKey', apiKey);
+                if (model) params.append('model', model);
+                if (icon) params.append('icon', icon);
+                if (enabled) params.append('enabled', enabled);
+                if (notes) params.append('notes', notes);
+
+                // 娣诲姞 Claude 涓撶敤妯″瀷瀛楁
+                if (app === 'claude') {
+                    if (haikuModel) params.append('haikuModel', haikuModel);
+                    if (sonnetModel) params.append('sonnetModel', sonnetModel);
+                    if (opusModel) params.append('opusModel', opusModel);
+                }
+            } else {
+                // 閰嶇疆鏂囦欢妯″紡
+                let configJson = '';
+
+                if (app === 'codex') {
+                    // Codex 鐗规畩澶勭悊锛氬悎骞?Auth JSON 鍜?Config TOML
+                    const authJson = document.getElementById('codexAuthJson').value.trim();
+                    const configToml = document.getElementById('codexConfigToml').value.trim();
+
+                    if (!authJson) {
+                        alert('鉂?璇峰～鍐?Codex 璁よ瘉淇℃伅 (JSON)锛?);
+                        return;
+                    }
+                    if (!configToml) {
+                        alert('鉂?璇峰～鍐?Codex 閰嶇疆鏂囦欢 (TOML)锛?);
+                        return;
+                    }
+
+                    try {
+                        const authObj = JSON.parse(authJson);
+                        // 鏋勯€犳渶缁堝璞?                        const finalObj = {
+                            ...authObj,
+                            config: configToml
+                        };
+                        configJson = JSON.stringify(finalObj);
+                    } catch (e) {
+                        alert('鉂?Codex 璁よ瘉淇℃伅涓嶆槸鏈夋晥鐨?JSON 鏍煎紡锛? + e.message);
+                        return;
+                    }
+                } else {
+                    // 鍏朵粬搴旂敤浣跨敤閫氱敤 JSON 杈撳叆妗?                    configJson = document.getElementById('configJson').value.trim();
+                    if (!configJson) {
+                        alert('鉂?閰嶇疆鏂囦欢妯″紡涓嬶紝璇峰～鍐欓厤缃枃浠跺唴瀹癸紒');
+                        return;
+                    }
+                    // 楠岃瘉 JSON 鏍煎紡
+                    try {
+                        JSON.parse(configJson);
+                    } catch (e) {
+                        alert('鉂?閰嶇疆鏂囦欢涓嶆槸鏈夋晥鐨?JSON 鏍煎紡锛? + e.message);
+                        return;
+                    }
+                }
+
+                const overrideApiKey = document.getElementById('overrideApiKey').value.trim();
+                const overrideEndpoint = document.getElementById('overrideEndpoint').value.trim();
+                const model = document.getElementById('model').value.trim();
+                const icon = document.getElementById('icon').value.trim();
+                const enabled = document.getElementById('enabled').value;
+                const notes = document.getElementById('notes').value.trim();
+
+                // Claude 涓撶敤瀛楁
+                const haikuModel = document.getElementById('haikuModel').value.trim();
+                const sonnetModel = document.getElementById('sonnetModel').value.trim();
+                const opusModel = document.getElementById('opusModel').value.trim();
+
+                // Base64 缂栫爜閰嶇疆鏂囦欢
+                const configB64 = utf8_to_b64(configJson);
+                params.append('config', configB64);
+                params.append('configFormat', 'json');
+
+                // 娣诲姞瑕嗙洊鍙傛暟
+                if (overrideApiKey) params.append('apiKey', overrideApiKey);
+                if (overrideEndpoint) {
+                    try {
+                        new URL(overrideEndpoint);
+                        params.append('endpoint', overrideEndpoint);
+                    } catch (e) {
+                        alert('鉂?瑕嗙洊绔偣 URL 鏍煎紡鏃犳晥锛?);
+                        return;
+                    }
+                }
+
+                if (model) params.append('model', model);
+                if (icon) params.append('icon', icon);
+                if (enabled) params.append('enabled', enabled);
+                if (notes) params.append('notes', notes);
+
+                // 娣诲姞 Claude 涓撶敤妯″瀷瀛楁
+                if (app === 'claude') {
+                    if (haikuModel) params.append('haikuModel', haikuModel);
+                    if (sonnetModel) params.append('sonnetModel', sonnetModel);
+                    if (opusModel) params.append('opusModel', opusModel);
+                }
+            }
+
+            // 娣诲姞鐢ㄩ噺鏌ヨ鍙傛暟 (v3.9+)
+            const usageEnabled = document.getElementById('usageEnabled').value;
+            const usageBaseUrl = document.getElementById('usageBaseUrl').value.trim();
+            const usageApiKey = document.getElementById('usageApiKey').value.trim();
+            const usageScript = document.getElementById('usageScript').value.trim();
+            const usageAutoInterval = document.getElementById('usageAutoInterval').value.trim();
+            const usageAccessToken = document.getElementById('usageAccessToken').value.trim();
+            const usageUserId = document.getElementById('usageUserId').value.trim();
+
+            if (usageEnabled) params.append('usageEnabled', usageEnabled);
+            if (usageBaseUrl) params.append('usageBaseUrl', usageBaseUrl);
+            if (usageApiKey) params.append('usageApiKey', usageApiKey);
+            if (usageScript) {
+                // URL-safe Base64 缂栫爜
+                const scriptB64 = utf8_to_b64(usageScript)
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+                params.append('usageScript', scriptB64);
+            }
+            if (usageAutoInterval) params.append('usageAutoInterval', usageAutoInterval);
+            if (usageAccessToken) params.append('usageAccessToken', usageAccessToken);
+            if (usageUserId) params.append('usageUserId', usageUserId);
+
+            const deepLink = `guyumate://v1/import?${params.toString()}`;
+
+            // 鏄剧ず缁撴灉
+            document.getElementById('linkText').textContent = deepLink;
+            document.getElementById('testLink').href = deepLink;
+            document.getElementById('result').style.display = 'block';
+
+            // 婊氬姩鍒扮粨鏋滃尯鍩?            document.getElementById('result').scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        function copyLink() {
+            const linkText = document.getElementById('linkText').textContent;
+
+            navigator.clipboard.writeText(linkText).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '鉁?宸插鍒讹紒';
+                btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('澶嶅埗澶辫触:', err);
+                alert('鉂?澶嶅埗澶辫触锛岃鎵嬪姩澶嶅埗閾炬帴');
+            });
+        }
+
+        // 澶嶅埗娣遍摼鎺?        function copyDeepLink(url, button) {
+            navigator.clipboard.writeText(url).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '鉁?宸插鍒讹紒';
+                button.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('澶嶅埗澶辫触:', err);
+                alert('鉂?澶嶅埗澶辫触锛岃鎵嬪姩澶嶅埗閾炬帴');
+            });
+        }
+
+        // 娣遍摼鎺ヨВ鏋愬櫒
+        function parseDeepLink() {
+            const urlInput = document.getElementById('parseUrl').value.trim();
+
+            if (!urlInput) {
+                alert('鉂?璇疯緭鍏ユ繁閾炬帴 URL锛?);
+                return;
+            }
+
+            try {
+                // 瑙ｆ瀽 URL
+                const url = new URL(urlInput);
+
+                // 楠岃瘉鍗忚
+                if (url.protocol !== 'guyumate:') {
+                    alert('鉂?鏃犳晥鐨勬繁閾炬帴鍗忚锛佸繀椤讳互 guyumate:// 寮€澶?);
+                    return;
+                }
+
+                // 鎻愬彇鐗堟湰鍜岃矾寰?                const version = url.hostname;
+                const path = url.pathname;
+
+                // 瑙ｆ瀽鏌ヨ鍙傛暟
+                const params = new URLSearchParams(url.search);
+                const paramsObj = {};
+                params.forEach((value, key) => {
+                    paramsObj[key] = value;
+                });
+
+                // 鏋勫缓鍩烘湰淇℃伅 HTML
+                let basicInfoHtml = `
+                    <div style="background: #e8f4f8; padding: 16px; border-radius: 8px; border-left: 4px solid #3498db;">
+                        <h4 style="margin-bottom: 12px; color: #2c3e50;">馃搵 鍩烘湰淇℃伅</h4>
+                        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 8px; font-size: 14px;">
+                            <div style="color: #7f8c8d;">鍗忚鐗堟湰:</div>
+                            <div style="font-weight: 600; color: #2c3e50;">${version}</div>
+                            <div style="color: #7f8c8d;">璺緞:</div>
+                            <div style="font-weight: 600; color: #2c3e50;">${path}</div>
+                            <div style="color: #7f8c8d;">璧勬簮绫诲瀷:</div>
+                            <div style="font-weight: 600; color: #2c3e50;">${paramsObj.resource || '-'}</div>
+                            <div style="color: #7f8c8d;">搴旂敤绫诲瀷:</div>
+                            <div style="font-weight: 600; color: #2c3e50; text-transform: capitalize;">${paramsObj.app || '-'}</div>
+                            <div style="color: #7f8c8d;">渚涘簲鍟嗗悕绉?</div>
+                            <div style="font-weight: 600; color: #2c3e50;">${paramsObj.name || '-'}</div>
+                        </div>
+                    </div>
+                `;
+
+                // 鏋勫缓 URL 鍙傛暟 HTML
+                let urlParamsHtml = `
+                    <div style="background: #fff3cd; padding: 16px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <h4 style="margin-bottom: 12px; color: #856404;">馃敆 URL 鍙傛暟</h4>
+                        <div style="display: grid; grid-template-columns: 150px 1fr; gap: 8px; font-size: 13px;">
+                `;
+
+                // 甯歌鍙傛暟锛堟帓闄?endpoint锛屽崟鐙鐞嗭級
+                const regularParams = ['homepage', 'apiKey', 'model', 'notes'];
+                regularParams.forEach(key => {
+                    if (paramsObj[key]) {
+                        let displayValue = paramsObj[key];
+                        // API Key 鎺╃爜澶勭悊
+                        if (key === 'apiKey') {
+                            displayValue = displayValue.substring(0, 10) + '****';
+                        }
+                        urlParamsHtml += `
+                            <div style="color: #856404; font-weight: 500;">${key}:</div>
+                            <div style="color: #856404; word-break: break-all; font-family: monospace; font-size: 12px;">${displayValue}</div>
+                        `;
+                    }
+                });
+
+                // 鍗曠嫭澶勭悊 endpoint锛堟敮鎸佸绔偣锛?                if (paramsObj.endpoint) {
+                    const endpoints = paramsObj.endpoint.split(',').map(e => e.trim()).filter(e => e);
+                    if (endpoints.length === 1) {
+                        // 鍗曚釜绔偣
+                        urlParamsHtml += `
+                            <div style="color: #856404; font-weight: 500;">endpoint:</div>
+                            <div style="color: #856404; word-break: break-all; font-family: monospace; font-size: 12px;">${endpoints[0]}</div>
+                        `;
+                    } else {
+                        // 澶氫釜绔偣
+                        urlParamsHtml += `
+                            <div style="color: #856404; font-weight: 500;">endpoints:</div>
+                            <div style="color: #856404; word-break: break-all; font-family: monospace; font-size: 12px;">
+                        `;
+                        endpoints.forEach((ep, idx) => {
+                            const label = idx === 0 ? '馃敼 涓荤鐐? : `鈹?澶囩敤 ${idx}`;
+                            urlParamsHtml += `
+                                <div style="margin-bottom: 4px; ${idx === 0 ? 'font-weight: 600;' : 'color: #a08040;'}">
+                                    ${label}: ${ep}
+                                </div>
+                            `;
+                        });
+                        urlParamsHtml += `
+                                <div style="margin-top: 8px; padding: 6px 10px; background: #fff8e1; border-radius: 4px; font-size: 11px; color: #856404;">
+                                    馃挕 鍏?${endpoints.length} 涓鐐癸紝绗竴涓负涓荤鐐癸紝鍏朵綑涓哄鐢ㄧ鐐?                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Claude 涓撶敤妯″瀷鍙傛暟
+                const claudeModelParams = ['haikuModel', 'sonnetModel', 'opusModel'];
+                claudeModelParams.forEach(key => {
+                    if (paramsObj[key]) {
+                        urlParamsHtml += `
+                            <div style="color: #856404; font-weight: 500;">${key}:</div>
+                            <div style="color: #856404; word-break: break-all; font-family: monospace; font-size: 12px;">${paramsObj[key]}</div>
+                        `;
+                    }
+                });
+
+                urlParamsHtml += '</div></div>';
+
+                // 閰嶇疆鏂囦欢瑙ｆ瀽
+                let configHtml = '';
+                if (paramsObj.config) {
+                    try {
+                        // 瑙ｇ爜 Base64
+                        const decoded = b64_to_utf8(paramsObj.config);
+                        const configObj = JSON.parse(decoded);
+
+                        configHtml = `
+                            <div style="background: #d1ecf1; padding: 16px; border-radius: 8px; border-left: 4px solid #17a2b8;">
+                                <h4 style="margin-bottom: 12px; color: #0c5460;">馃搫 閰嶇疆鏂囦欢鍐呭 (${paramsObj.configFormat?.toUpperCase() || 'JSON'})</h4>
+                        `;
+
+                        // 鏍规嵁搴旂敤绫诲瀷瑙ｆ瀽閰嶇疆
+                        if (paramsObj.app === 'claude') {
+                            const env = configObj.env || {};
+                            configHtml += `
+                                <div style="background: #fff; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                    <div style="font-size: 12px; color: #0c5460; margin-bottom: 8px; font-weight: 600;">Claude 鐜鍙橀噺:</div>
+                                    <div style="display: grid; grid-template-columns: 250px 1fr; gap: 6px; font-size: 12px; font-family: monospace;">
+                            `;
+                            Object.keys(env).forEach(key => {
+                                let value = env[key];
+                                if (key.includes('TOKEN') || key.includes('KEY')) {
+                                    value = value.substring(0, 10) + '****';
+                                }
+                                configHtml += `
+                                    <div style="color: #0c5460; font-weight: 500;">${key}:</div>
+                                    <div style="color: #0c5460;">${value}</div>
+                                `;
+                            });
+                            configHtml += '</div></div>';
+                        } else if (paramsObj.app === 'codex') {
+                            const auth = configObj.auth || {};
+                            const config = configObj.config || '';
+
+                            configHtml += `
+                                <div style="background: #fff; padding: 12px; border-radius: 6px; margin-bottom: 12px;">
+                                    <div style="font-size: 12px; color: #0c5460; margin-bottom: 8px; font-weight: 600;">Codex 璁よ瘉淇℃伅:</div>
+                                    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 6px; font-size: 12px; font-family: monospace;">
+                            `;
+                            Object.keys(auth).forEach(key => {
+                                let value = auth[key];
+                                if (key.includes('KEY')) {
+                                    value = value.substring(0, 10) + '****';
+                                }
+                                configHtml += `
+                                    <div style="color: #0c5460; font-weight: 500;">${key}:</div>
+                                    <div style="color: #0c5460;">${value}</div>
+                                `;
+                            });
+                            configHtml += '</div></div>';
+
+                            if (config) {
+                                configHtml += `
+                                    <div style="background: #fff; padding: 12px; border-radius: 6px;">
+                                        <div style="font-size: 12px; color: #0c5460; margin-bottom: 8px; font-weight: 600;">TOML 閰嶇疆:</div>
+                                        <pre style="margin: 0; font-size: 11px; color: #0c5460; white-space: pre-wrap; word-break: break-all;">${config}</pre>
+                                    </div>
+                                `;
+                            }
+                        } else if (paramsObj.app === 'gemini') {
+                            configHtml += `
+                                <div style="background: #fff; padding: 12px; border-radius: 6px;">
+                                    <div style="font-size: 12px; color: #0c5460; margin-bottom: 8px; font-weight: 600;">Gemini 鐜鍙橀噺:</div>
+                                    <div style="display: grid; grid-template-columns: 200px 1fr; gap: 6px; font-size: 12px; font-family: monospace;">
+                            `;
+                            Object.keys(configObj).forEach(key => {
+                                let value = configObj[key];
+                                if (key.includes('KEY')) {
+                                    value = value.substring(0, 10) + '****';
+                                }
+                                configHtml += `
+                                    <div style="color: #0c5460; font-weight: 500;">${key}:</div>
+                                    <div style="color: #0c5460;">${value}</div>
+                                `;
+                            });
+                            configHtml += '</div></div>';
+                        }
+
+                        // 鍘熷 JSON
+                        configHtml += `
+                            <details style="margin-top: 12px;">
+                                <summary style="cursor: pointer; color: #0c5460; font-size: 12px; font-weight: 600;">鏌ョ湅鍘熷 JSON 鈫?/summary>
+                                <pre style="margin-top: 8px; padding: 12px; background: #f8f9fa; border-radius: 6px; font-size: 11px; overflow-x: auto; border: 1px solid #dee2e6;">${JSON.stringify(configObj, null, 2)}</pre>
+                            </details>
+                        `;
+
+                        configHtml += '</div>';
+                    } catch (e) {
+                        configHtml = `
+                            <div style="background: #f8d7da; padding: 16px; border-radius: 8px; border-left: 4px solid #dc3545;">
+                                <h4 style="margin-bottom: 8px; color: #721c24;">鉂?閰嶇疆鏂囦欢瑙ｆ瀽澶辫触</h4>
+                                <div style="color: #721c24; font-size: 13px;">${e.message}</div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // 鐢ㄩ噺鏌ヨ閰嶇疆瑙ｆ瀽 (v3.9+)
+                let usageHtml = '';
+                if (paramsObj.usageEnabled || paramsObj.usageScript || paramsObj.usageBaseUrl) {
+                    usageHtml = `
+                        <div style="background: #f0fff4; padding: 16px; border-radius: 8px; border-left: 4px solid #27ae60; margin-top: 16px;">
+                            <h4 style="margin-bottom: 12px; color: #27ae60;">馃搳 鐢ㄩ噺鏌ヨ閰嶇疆 (v3.9+)</h4>
+                            <div style="display: grid; grid-template-columns: 150px 1fr; gap: 8px; font-size: 13px;">
+                    `;
+
+                    if (paramsObj.usageEnabled) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">鍚敤鐘舵€?</div>
+                            <div style="color: #27ae60;">${paramsObj.usageEnabled === 'true' ? '鉁?宸插惎鐢? : '鉂?宸茬鐢?}</div>
+                        `;
+                    }
+
+                    if (paramsObj.usageBaseUrl) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">Base URL:</div>
+                            <div style="color: #27ae60; word-break: break-all; font-family: monospace; font-size: 12px;">${paramsObj.usageBaseUrl}</div>
+                        `;
+                    }
+
+                    if (paramsObj.usageApiKey) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">API Key:</div>
+                            <div style="color: #27ae60; font-family: monospace; font-size: 12px;">${paramsObj.usageApiKey.substring(0, 10)}****</div>
+                        `;
+                    }
+
+                    if (paramsObj.usageAutoInterval) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">鑷姩鏌ヨ闂撮殧:</div>
+                            <div style="color: #27ae60;">${paramsObj.usageAutoInterval} 鍒嗛挓</div>
+                        `;
+                    }
+
+                    if (paramsObj.usageAccessToken) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">Access Token:</div>
+                            <div style="color: #27ae60; font-family: monospace; font-size: 12px;">${paramsObj.usageAccessToken.substring(0, 10)}****</div>
+                        `;
+                    }
+
+                    if (paramsObj.usageUserId) {
+                        usageHtml += `
+                            <div style="color: #27ae60; font-weight: 500;">User ID:</div>
+                            <div style="color: #27ae60; font-family: monospace; font-size: 12px;">${paramsObj.usageUserId}</div>
+                        `;
+                    }
+
+                    usageHtml += '</div>';
+
+                    // 瑙ｆ瀽鐢ㄩ噺鑴氭湰
+                    if (paramsObj.usageScript) {
+                        try {
+                            // URL-safe Base64 瑙ｇ爜
+                            let scriptB64 = paramsObj.usageScript
+                                .replace(/-/g, '+')
+                                .replace(/_/g, '/');
+                            // 琛ラ綈 padding
+                            while (scriptB64.length % 4) {
+                                scriptB64 += '=';
+                            }
+                            const scriptContent = b64_to_utf8(scriptB64);
+                            usageHtml += `
+                                <div style="margin-top: 12px;">
+                                    <div style="font-size: 12px; color: #27ae60; margin-bottom: 8px; font-weight: 600;">鐢ㄩ噺鏌ヨ鑴氭湰:</div>
+                                    <pre style="margin: 0; padding: 12px; background: #fff; border-radius: 6px; font-size: 11px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; border: 1px solid #27ae60;">${scriptContent}</pre>
+                                </div>
+                            `;
+                        } catch (e) {
+                            usageHtml += `
+                                <div style="margin-top: 12px; color: #dc3545; font-size: 12px;">
+                                    鈿狅笍 鑴氭湰瑙ｇ爜澶辫触: ${e.message}
+                                </div>
+                            `;
+                        }
+                    }
+
+                    usageHtml += '</div>';
+                }
+
+                // 鏄剧ず缁撴灉
+                document.getElementById('parseBasicInfo').innerHTML = basicInfoHtml;
+                document.getElementById('parseUrlParams').innerHTML = urlParamsHtml;
+                document.getElementById('parseConfigContent').innerHTML = configHtml + usageHtml;
+                document.getElementById('parseResult').style.display = 'block';
+
+                // 婊氬姩鍒扮粨鏋?                document.getElementById('parseResult').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+
+            } catch (e) {
+                alert('鉂?娣遍摼鎺ヨВ鏋愬け璐ワ細' + e.message);
+                console.error('Parse error:', e);
+            }
+        }
+
+        // 闃绘琛ㄥ崟榛樿鎻愪氦琛屼负
+        document.addEventListener('DOMContentLoaded', function () {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                        e.preventDefault();
+                        generateLink();
+                    }
+                });
+            });
+
+            // 鍒濆鍖栨樉绀?Claude 瀛楁
+            updateModelFields();
+        });
+
+        // Base64 缂栫爜鍔熻兘
+        function encodeToBase64() {
+            const input = document.getElementById('encodeInput').value;
+
+            if (!input.trim()) {
+                alert('鉂?璇疯緭鍏ヨ缂栫爜鐨勫唴瀹癸紒');
+                return;
+            }
+
+            try {
+                const encoded = utf8_to_b64(input);
+                document.getElementById('encodeOutput').textContent = encoded;
+                document.getElementById('encodeResult').style.display = 'block';
+
+                // 婊氬姩鍒扮粨鏋?                document.getElementById('encodeResult').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            } catch (e) {
+                alert('鉂?缂栫爜澶辫触锛? + e.message);
+                console.error('Encode error:', e);
+            }
+        }
+
+        // Base64 瑙ｇ爜鍔熻兘
+        function decodeFromBase64() {
+            const input = document.getElementById('decodeInput').value.trim();
+
+            if (!input) {
+                alert('鉂?璇疯緭鍏ヨ瑙ｇ爜鐨?Base64 鍐呭锛?);
+                return;
+            }
+
+            try {
+                const decoded = b64_to_utf8(input);
+                document.getElementById('decodeOutput').textContent = decoded;
+                document.getElementById('decodeResult').style.display = 'block';
+
+                // 妫€鏌ユ槸鍚︽槸 JSON锛屽鏋滄槸鍒欐樉绀烘牸寮忓寲鎸夐挳
+                try {
+                    JSON.parse(decoded);
+                    document.getElementById('jsonFormat').style.display = 'block';
+                } catch {
+                    document.getElementById('jsonFormat').style.display = 'none';
+                }
+
+                // 婊氬姩鍒扮粨鏋?                document.getElementById('decodeResult').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            } catch (e) {
+                alert('鉂?瑙ｇ爜澶辫触锛? + e.message + '\n\n璇风‘淇濊緭鍏ョ殑鏄湁鏁堢殑 Base64 缂栫爜');
+                console.error('Decode error:', e);
+            }
+        }
+
+        // 鏍煎紡鍖?JSON
+        function formatJson() {
+            try {
+                const text = document.getElementById('decodeOutput').textContent;
+                const obj = JSON.parse(text);
+                const formatted = JSON.stringify(obj, null, 2);
+                document.getElementById('decodeOutput').textContent = formatted;
+            } catch (e) {
+                alert('鉂?JSON 鏍煎紡鍖栧け璐ワ細' + e.message);
+            }
+        }
+
+        // 澶嶅埗缂栫爜缁撴灉
+        function copyEncoded() {
+            const text = document.getElementById('encodeOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '鉁?宸插鍒讹紒';
+                btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('澶嶅埗澶辫触:', err);
+                alert('鉂?澶嶅埗澶辫触锛岃鎵嬪姩澶嶅埗');
+            });
+        }
+
+        // 澶嶅埗瑙ｇ爜缁撴灉
+        function copyDecoded() {
+            const text = document.getElementById('decodeOutput').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '鉁?宸插鍒讹紒';
+                btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('澶嶅埗澶辫触:', err);
+                alert('鉂?澶嶅埗澶辫触锛岃鎵嬪姩澶嶅埗');
+            });
+        }
+
+        // ==================== 娣遍摼鎺ョ敓鎴愬櫒鍑芥暟 ====================
+
+        // 鐢熸垚渚涘簲鍟嗘繁閾炬帴
+        function generateProviderLink() {
+            const app = document.getElementById('providerApp').value;
+            const name = document.getElementById('providerName').value.trim();
+            const apiKey = document.getElementById('providerApiKey').value.trim();
+            const endpoint = document.getElementById('providerEndpoint').value.trim();
+            const homepage = document.getElementById('providerHomepage').value.trim();
+            const model = document.getElementById('providerModel').value.trim();
+            const notes = document.getElementById('providerNotes').value.trim();
+            const enabled = document.getElementById('providerEnabled').value;
+
+            // 楠岃瘉蹇呭～瀛楁
+            if (!name) {
+                alert('鉂?璇峰～鍐欎緵搴斿晢鍚嶇О');
+                return;
+            }
+
+            if (!apiKey) {
+                alert('鉂?璇峰～鍐?API Key');
+                return;
+            }
+
+            if (!endpoint) {
+                alert('鉂?璇峰～鍐?API Endpoint');
+                return;
+            }
+
+            if (!homepage) {
+                alert('鉂?璇峰～鍐欎富椤甸摼鎺?);
+                return;
+            }
+
+            // 鏋勫缓娣遍摼鎺?            let url = `guyumate://v1/import?resource=provider&app=${app}&name=${encodeURIComponent(name)}&endpoint=${encodeURIComponent(endpoint)}&homepage=${encodeURIComponent(homepage)}&apiKey=${encodeURIComponent(apiKey)}`;
+
+            if (model) {
+                url += `&model=${encodeURIComponent(model)}`;
+            }
+
+            if (notes) {
+                url += `&notes=${encodeURIComponent(notes)}`;
+            }
+
+            if (enabled === 'true') {
+                url += '&enabled=true';
+            }
+
+            // 鏄剧ず缁撴灉
+            document.getElementById('providerUrl').textContent = url;
+            document.getElementById('providerImportBtn').href = url;
+            document.getElementById('providerResult').style.display = 'block';
+
+            // 婊氬姩鍒扮粨鏋?            document.getElementById('providerResult').scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        // 鐢熸垚 MCP 娣遍摼鎺?        function generateMcpLink() {
+            const apps = document.getElementById('mcpApps').value.trim();
+            const config = document.getElementById('mcpConfig').value.trim();
+            const enabled = document.getElementById('mcpEnabled').value;
+
+            if (!apps) {
+                alert('鉂?璇峰～鍐欑洰鏍囧簲鐢?);
+                return;
+            }
+
+            if (!config) {
+                alert('鉂?璇峰～鍐?MCP 閰嶇疆');
+                return;
+            }
+
+            try {
+                // 楠岃瘉 JSON 鏍煎紡
+                const jsonObj = JSON.parse(config);
+                if (!jsonObj.mcpServers) {
+                    alert('鉂?閰嶇疆蹇呴』鍖呭惈 mcpServers 瀛楁');
+                    return;
+                }
+
+                // Base64 缂栫爜閰嶇疆
+                const configB64 = utf8_to_b64(config);
+
+                // 鏋勫缓娣遍摼鎺?                let url = `guyumate://v1/import?resource=mcp&apps=${encodeURIComponent(apps)}&config=${encodeURIComponent(configB64)}`;
+
+                if (enabled === 'true') {
+                    url += '&enabled=true';
+                }
+
+                // 鏄剧ず缁撴灉
+                document.getElementById('mcpUrl').textContent = url;
+                document.getElementById('mcpImportBtn').href = url;
+                document.getElementById('mcpResult').style.display = 'block';
+
+                // 婊氬姩鍒扮粨鏋?                document.getElementById('mcpResult').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest'
+                });
+            } catch (e) {
+                alert('鉂?JSON 鏍煎紡閿欒锛? + e.message);
+            }
+        }
+
+        // 鐢熸垚 Prompt 娣遍摼鎺?        function generatePromptLink() {
+            const app = document.getElementById('promptApp').value;
+            const name = document.getElementById('promptName').value.trim();
+            const content = document.getElementById('promptContent').value.trim();
+            const description = document.getElementById('promptDescription').value.trim();
+            const enabled = document.getElementById('promptEnabled').value;
+
+            if (!name) {
+                alert('鉂?璇峰～鍐欐彁绀鸿瘝鍚嶇О');
+                return;
+            }
+
+            if (!content) {
+                alert('鉂?璇峰～鍐欐彁绀鸿瘝鍐呭');
+                return;
+            }
+
+            // Base64 缂栫爜鍐呭
+            const contentB64 = utf8_to_b64(content);
+
+            // 鏋勫缓娣遍摼鎺?            let url = `guyumate://v1/import?resource=prompt&app=${app}&name=${encodeURIComponent(name)}&content=${encodeURIComponent(contentB64)}`;
+
+            if (description) {
+                url += `&description=${encodeURIComponent(description)}`;
+            }
+
+            if (enabled === 'true') {
+                url += '&enabled=true';
+            }
+
+            // 鏄剧ず缁撴灉
+            document.getElementById('promptUrl').textContent = url;
+            document.getElementById('promptImportBtn').href = url;
+            document.getElementById('promptResult').style.display = 'block';
+
+            // 婊氬姩鍒扮粨鏋?            document.getElementById('promptResult').scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        // 鐢熸垚 Skill 娣遍摼鎺?        function generateSkillLink() {
+            const repo = document.getElementById('skillRepo').value.trim();
+            const branch = document.getElementById('skillBranch').value.trim() || 'main';
+            const skillsPath = document.getElementById('skillPath').value.trim() || 'skills';
+            const directory = document.getElementById('skillDirectory').value.trim();
+
+            if (!repo) {
+                alert('鉂?璇峰～鍐?GitHub 浠撳簱');
+                return;
+            }
+
+            // 楠岃瘉浠撳簱鏍煎紡
+            if (!repo.includes('/')) {
+                alert('鉂?浠撳簱鏍煎紡搴斾负: owner/repo-name');
+                return;
+            }
+
+            // 鏋勫缓娣遍摼鎺?            let url = `guyumate://v1/import?resource=skill&repo=${encodeURIComponent(repo)}&branch=${encodeURIComponent(branch)}&skills_path=${encodeURIComponent(skillsPath)}`;
+
+            if (directory) {
+                url += `&directory=${encodeURIComponent(directory)}`;
+            }
+
+            // 鏄剧ず缁撴灉
+            document.getElementById('skillUrl').textContent = url;
+            document.getElementById('skillImportBtn').href = url;
+            document.getElementById('skillResult').style.display = 'block';
+
+            // 婊氬姩鍒扮粨鏋?            document.getElementById('skillResult').scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        // 澶嶅埗鐢熸垚鐨勯摼鎺?        function copyGeneratedLink(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '鉁?宸插鍒讹紒';
+                btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #229954 100%)';
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('澶嶅埗澶辫触:', err);
+                alert('鉂?澶嶅埗澶辫触锛岃鎵嬪姩澶嶅埗');
+            });
+        }
+
+        // 閫変腑鏂囨湰锛堢偣鍑?URL 鏃讹級
+        function selectText(element) {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    </script>
+</body>
+
+</html>
+
+

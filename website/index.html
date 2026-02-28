@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GuYu Mate - Claude Code 智能助手</title>
+    <meta
+      name="description"
+      content="GuYu Mate 是一款专为 Claude Code CLI 打造的桌面管理工具，一键安装、配置、切换 AI 供应商。"
+    />
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- 动态背景画布 -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" id="navbar">
+      <div class="container nav-inner">
+        <a href="#" class="nav-logo">
+          <img src="assets/logo.jpg" alt="GuYu Mate" class="logo-img" />
+          <span class="logo-text">GuYu Mate</span>
+        </a>
+        <div class="nav-links" id="navLinks">
+          <a href="#features" class="nav-link">功能特性</a>
+          <a href="#download" class="nav-link">下载安装</a>
+          <a href="#tutorial" class="nav-link">使用教程</a>
+          <a href="#changelog" class="nav-link">更新日志</a>
+        </div>
+        <button class="nav-toggle" id="navToggle" aria-label="菜单">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-glow"></div>
+      <div class="container hero-inner">
+        <div class="hero-badge">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+          </svg>
+          专为 Claude Code 打造
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-title-line">让 AI 编程</span>
+          <span class="hero-title-accent">触手可及</span>
+        </h1>
+        <p class="hero-desc">
+          一键安装 Claude Code CLI，智能管理 AI 供应商配置。<br />告别繁琐环境搭建，专注于你的代码。
+        </p>
+        <div class="hero-cta">
+          <a href="#download" class="btn btn-primary">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            立即下载
+          </a>
+          <a href="#features" class="btn btn-ghost">了解更多</a>
+        </div>
+        <p class="hero-version" id="heroVersion">
+          v3.11.0 · Windows / macOS / Linux
+        </p>
+      </div>
+    </section>
+
+    <!-- 功能特性 -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Features</span>
+          <h2 class="section-title">核心功能</h2>
+          <p class="section-desc">简单三步，开启 AI 编程之旅</p>
+        </div>
+        <div class="features-grid">
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+            </div>
+            <h3>一键安装</h3>
+            <p>
+              自动检测 Node.js 环境，一键安装 Claude Code
+              CLI，无需手动配置命令行。
+            </p>
+          </div>
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"
+                />
+              </svg>
+            </div>
+            <h3>智能配置</h3>
+            <p>内置谷雨大模型预设，输入 API Key 即可完成配置，零门槛上手。</p>
+          </div>
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path
+                  d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"
+                />
+              </svg>
+            </div>
+            <h3>供应商管理</h3>
+            <p>可视化管理多个 AI 供应商，一键切换，支持自定义 API 端点。</p>
+          </div>
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+                <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+                <line x1="6" y1="6" x2="6.01" y2="6" />
+                <line x1="6" y1="18" x2="6.01" y2="18" />
+              </svg>
+            </div>
+            <h3>MCP 服务器</h3>
+            <p>
+              统一管理 MCP 服务器配置，支持 stdio / http / sse 多种传输方式。
+            </p>
+          </div>
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                />
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                <line x1="12" y1="22.08" x2="12" y2="12" />
+              </svg>
+            </div>
+            <h3>Skills 管理</h3>
+            <p>从 GitHub 仓库发现并安装 Claude Skills，一键管理技能包。</p>
+          </div>
+          <div class="feat-card" data-reveal>
+            <div class="feat-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+            </div>
+            <h3>安全可靠</h3>
+            <p>本地存储所有配置，原子写入防损坏，自动备份保护数据安全。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 下载 -->
+    <section id="download" class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Download</span>
+          <h2 class="section-title">下载安装</h2>
+          <p class="section-desc" id="latestVersion">最新版本 v3.11.0</p>
+        </div>
+        <div class="dl-grid">
+          <div class="dl-card" data-reveal>
+            <div class="dl-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </div>
+            <h3>Windows</h3>
+            <p class="dl-req">Windows 10 及以上</p>
+            <div class="dl-btns">
+              <a href="#" class="btn btn-primary btn-sm" id="dlMsi"
+                >MSI 安装包</a
+              >
+              <a href="#" class="btn btn-ghost btn-sm" id="dlZip">便携版 ZIP</a>
+            </div>
+          </div>
+          <div class="dl-card" data-reveal>
+            <div class="dl-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 4-3 4-3s-1.5-.5-2-2c-.5-1.5.5-3 .5-3s-2-1-3.5 0c-1 .67-1.5 1.5-3 1.5s-2-0.83-3-1.5c-1.5-1-3.5 0-3.5 0s1 1.5.5 3c-.5 1.5-2 2-2 2s1 3 4 3c1.25 0 2.5-1.06 4-1.06z"
+                />
+                <path d="M12 2a7 7 0 0 0-2 13.5" />
+                <path d="M12 2a7 7 0 0 1 2 13.5" />
+              </svg>
+            </div>
+            <h3>macOS</h3>
+            <p class="dl-req">macOS 10.15 及以上</p>
+            <div class="dl-btns">
+              <a href="#" class="btn btn-primary btn-sm" id="dlMac"
+                >DMG 安装包</a
+              >
+            </div>
+          </div>
+          <div class="dl-card" data-reveal>
+            <div class="dl-icon">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+              </svg>
+            </div>
+            <h3>Linux</h3>
+            <p class="dl-req">Ubuntu 22.04+ / Debian 11+</p>
+            <div class="dl-btns">
+              <a href="#" class="btn btn-primary btn-sm" id="dlDeb">DEB 包</a>
+              <a href="#" class="btn btn-ghost btn-sm" id="dlAppImg"
+                >AppImage</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 教程 -->
+    <section id="tutorial" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Quick Start</span>
+          <h2 class="section-title">快速上手</h2>
+          <p class="section-desc">三步开始使用 GuYu Mate</p>
+        </div>
+        <div class="steps">
+          <div class="step" data-reveal>
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <h3>下载安装 GuYu Mate</h3>
+              <p>
+                根据你的操作系统下载对应的安装包，安装后打开软件。首次启动会自动进入一键安装向导。
+              </p>
+            </div>
+          </div>
+          <div class="step" data-reveal>
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <h3>一键安装 Claude Code CLI</h3>
+              <p>
+                在「一键安装」页面，软件会自动检测 Node.js
+                环境。如果未安装，点击安装按钮即可。然后一键安装 Claude Code CLI
+                工具。
+              </p>
+            </div>
+          </div>
+          <div class="step" data-reveal>
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <h3>配置谷雨大模型 API Key</h3>
+              <p>
+                前往
+                <a
+                  href="https://code.o2oe.net/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >谷雨大模型平台</a
+                >
+                注册账号并生成 API Key，粘贴到软件中即可完成配置。打开终端输入
+                <code>claude</code> 开始对话！
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 更新日志 -->
+    <section id="changelog" class="section section-alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Changelog</span>
+          <h2 class="section-title">更新日志</h2>
+          <p class="section-desc">持续迭代，不断进化</p>
+        </div>
+        <div class="changelog" id="changelogList"></div>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <img src="assets/logo.jpg" alt="GuYu Mate" class="logo-img" />
+          <span class="logo-text">GuYu Mate</span>
+        </div>
+        <p class="footer-desc">专为 Claude Code CLI 打造的桌面管理工具</p>
+        <p class="footer-copy">&copy; 2026 GuYu Mate. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "notes": "GuYu Mate v1.0.0 首个正式版本",
+  "pub_date": "2026-03-01T00:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "PLACEHOLDER_SIGNATURE",
+      "url": "https://github.com/SuxyEE/GuYu-Mate/releases/download/v1.0.0/GuYu-Mate-v1.0.0-Windows.msi.zip"
+    },
+    "darwin-x86_64": {
+      "signature": "PLACEHOLDER_SIGNATURE",
+      "url": "https://github.com/SuxyEE/GuYu-Mate/releases/download/v1.0.0/GuYu-Mate-v1.0.0-macOS.zip"
+    },
+    "darwin-aarch64": {
+      "signature": "PLACEHOLDER_SIGNATURE",
+      "url": "https://github.com/SuxyEE/GuYu-Mate/releases/download/v1.0.0/GuYu-Mate-v1.0.0-macOS.zip"
+    },
+    "linux-x86_64": {
+      "signature": "PLACEHOLDER_SIGNATURE",
+      "url": "https://github.com/SuxyEE/GuYu-Mate/releases/download/v1.0.0/GuYu-Mate-v1.0.0-Linux.AppImage.tar.gz"
+    }
+  }
+}

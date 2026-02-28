@@ -1,0 +1,32 @@
+node_modules/
+dist/
+release/
+.DS_Store
+*.log
+.env
+.env.local
+*.tsbuildinfo
+.npmrc
+CLAUDE.md
+# AGENTS.md
+GEMINI.md
+/.claude
+/.codex
+/.gemini
+/.guyu-mate
+/.idea
+/.vscode
+vitest-report.json
+nul
+
+# Flatpak build artifacts
+flatpak/guyu-mate.deb
+flatpak-build/
+flatpak-repo/
+.worktrees/
+.spec-workflow/
+app-icon-temp.png
+website-full.png
+cc-switch-main/
+assets/partners/
+assets/screenshots/
