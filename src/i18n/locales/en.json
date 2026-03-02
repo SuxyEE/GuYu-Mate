@@ -1429,6 +1429,31 @@
       "successSingle": "Skill {{name}} installed",
       "successMultiple": "Successfully installed {{count}} skills",
       "noSkillsFound": "No skills found in ZIP file (requires SKILL.md file)"
+    },
+    "recommend": {
+      "title": "Recommended Developer Skills",
+      "description": "Curated developer skills to enhance your AI coding assistant. Select and install with one click.",
+      "loading": "Loading recommended skills...",
+      "noMatch": "No recommended skills available. Browse all skills in the discovery page.",
+      "selectAll": "Select All",
+      "selectedCount": "{{count}} selected",
+      "installSelected": "Install ({{count}})",
+      "installing": "Installing...",
+      "installSuccess": "Successfully installed {{count}} recommended skills",
+      "installPartialFailed": "{{count}} skills failed to install",
+      "browseMore": "Browse More",
+      "softwareEngineer": "Software Engineer",
+      "softwareEngineerDesc": "Comprehensive software engineering best practices covering code quality, design patterns and standards",
+      "tdd": "Test-Driven Development",
+      "tddDesc": "TDD workflow guidance: write tests first, then code, ensuring quality and maintainability",
+      "codeReview": "Code Review",
+      "codeReviewDesc": "Systematic code review methodology to find issues and improve code quality",
+      "architectureDesign": "Architecture Design",
+      "architectureDesignDesc": "Software architecture principles and patterns for sound technical decisions",
+      "debugSystematically": "Systematic Debugging",
+      "debugSystematicallyDesc": "Structured debugging methodology: from symptoms to root cause to efficient fix",
+      "gitCommit": "Git Commit Best Practices",
+      "gitCommitDesc": "Git commit message best practices for clear and traceable commit history"
     }
   },
   "deeplink": {

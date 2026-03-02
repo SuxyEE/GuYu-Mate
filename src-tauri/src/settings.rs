@@ -176,7 +176,7 @@ pub struct AppSettings {
     #[serde(default = "default_minimize_to_tray_on_close")]
     pub minimize_to_tray_on_close: bool,
     /// 是否启用 Claude 插件联动
-    #[serde(default)]
+    #[serde(default = "default_enable_claude_plugin_integration")]
     pub enable_claude_plugin_integration: bool,
     /// 是否跳过 Claude Code 初次安装确认
     #[serde(default)]
@@ -270,12 +270,16 @@ fn default_minimize_to_tray_on_close() -> bool {
     true
 }
 
+fn default_enable_claude_plugin_integration() -> bool {
+    true
+}
+
 impl Default for AppSettings {
     fn default() -> Self {
         Self {
             show_in_tray: true,
             minimize_to_tray_on_close: true,
-            enable_claude_plugin_integration: false,
+            enable_claude_plugin_integration: true,
             skip_claude_onboarding: false,
             launch_on_startup: false,
             silent_startup: false,

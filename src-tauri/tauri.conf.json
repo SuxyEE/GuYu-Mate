@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "GuYu Mate",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "identifier": "com.guyumate.desktop",
   "build": {
     "frontendDist": "../dist",
@@ -16,9 +16,9 @@
         "title": "",
         "titleBarStyle": "Overlay",
         "width": 1000,
-        "height": 650,
+        "height": 780,
         "minWidth": 900,
-        "minHeight": 600,
+        "minHeight": 700,
         "visible": false,
         "resizable": true,
         "fullscreen": false,

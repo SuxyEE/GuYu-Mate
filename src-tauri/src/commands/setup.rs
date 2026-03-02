@@ -441,7 +441,12 @@ fn build_node_download_url() -> Result<(String, String), String> {
             Ok((format!("{base}/{filename}"), filename))
         }
         "macos" => {
-            let filename = format!("node-v{NODE_LTS_VERSION}.pkg");
+            // Apple Silicon (aarch64) 需要下载 arm64 版本的 pkg
+            let filename = if node_arch == "arm64" {
+                format!("node-v{NODE_LTS_VERSION}-{node_arch}.pkg")
+            } else {
+                format!("node-v{NODE_LTS_VERSION}.pkg")
+            };
             Ok((format!("{base}/{filename}"), filename))
         }
         "linux" => {
@@ -536,21 +541,29 @@ async fn install_node_windows(
     Ok(())
 }
 /// macOS: 安装 .pkg
+///
+/// GUI 应用中 sudo 没有 TTY 无法弹出密码提示，因此使用 osascript
+/// 调用系统授权对话框（会弹出 macOS 原生密码输入窗口）。
 async fn install_node_macos(
     app: &AppHandle,
     task_id: &str,
     pkg_path: &std::path::Path,
 ) -> Result<(), String> {
-    emit_progress(app, task_id, "正在安装 Node.js (.pkg)...");
+    emit_progress(app, task_id, "正在安装 Node.js (.pkg)，可能需要输入管理员密码...");
     let path_str = pkg_path.to_string_lossy();
-    let status = TokioCommand::new("sudo")
-        .args(["installer", "-pkg", &path_str, "-target", "/"])
+    // 使用 osascript 弹出系统授权对话框，避免 sudo 无 TTY 问题
+    let script = format!(
+        "do shell script \"installer -pkg '{}' -target /\" with administrator privileges",
+        path_str.replace('\'', "'\\''")
+    );
+    let status = TokioCommand::new("osascript")
+        .args(["-e", &script])
         .status()
         .await
         .map_err(|e| format!("启动安装程序失败: {e}"))?;
     if !status.success() {
         return Err(format!(
-            "pkg 安装失败，退出码: {:?}",
+            "pkg 安装失败，退出码: {:?}（用户可能取消了授权）",
             status.code()
         ));
     }

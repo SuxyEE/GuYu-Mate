@@ -123,12 +123,14 @@ impl Default for SkillStore {
         SkillStore {
             skills: HashMap::new(),
             repos: vec![
+                // ===== 官方 & 核心 =====
                 SkillRepo {
                     owner: "anthropics".to_string(),
                     name: "skills".to_string(),
                     branch: "main".to_string(),
                     enabled: true,
                 },
+                // ===== 社区精选 =====
                 SkillRepo {
                     owner: "ComposioHQ".to_string(),
                     name: "awesome-claude-skills".to_string(),
@@ -144,6 +146,21 @@ impl Default for SkillStore {
                 SkillRepo {
                     owner: "JimLiu".to_string(),
                     name: "baoyu-skills".to_string(),
+                    branch: "main".to_string(),
+                    enabled: true,
+                },
+                // ===== 开发者工具 =====
+                // VoltAgent：经过实际工程团队验证的高质量 Agent Skills 合集
+                SkillRepo {
+                    owner: "VoltAgent".to_string(),
+                    name: "awesome-agent-skills".to_string(),
+                    branch: "main".to_string(),
+                    enabled: true,
+                },
+                // obra/superpowers：20+ 实战级核心技能库（代码审查、架构设计、TDD等）
+                SkillRepo {
+                    owner: "obra".to_string(),
+                    name: "superpowers".to_string(),
                     branch: "main".to_string(),
                     enabled: true,
                 },

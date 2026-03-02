@@ -304,7 +304,6 @@ export function SetupPage() {
       setProviderSaved(true);
       setExistingProviderId(provider.id);
       toast.success("AI 供应商配置成功！已自动启用谷雨大模型");
-      toast.success("AI 供应商配置成功！已自动启用谷雨大模型");
     } catch (error) {
       console.error("Failed to save provider:", error);
       toast.error("配置保存失败，请重试");
@@ -648,7 +647,6 @@ export function SetupPage() {
                             <img src={guyuLogo} alt="谷雨大模型" className="w-6 h-6 rounded-sm object-cover" />
                             <p className="text-sm font-medium">第一步：注册谷雨大模型账号</p>
                           </div>
-                          <p className="text-sm font-medium">第一步：注册谷雨大模型账号</p>
                           <p className="text-xs text-muted-foreground">
                             前往谷雨大模型应用平台注册账号，并在控制台生成 API Key
                           </p>

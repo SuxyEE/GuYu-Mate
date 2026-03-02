@@ -1,9 +1,21 @@
 const SITE_CONFIG = {
-  baseUrl: "",
-  version: "1.0.0",
+  github: "https://github.com/SuxyEE/GuYu-Mate",
+  version: "1.1.0",
 };
 
 const CHANGELOG = [
+  {
+    version: "1.1.0",
+    date: "2026-03-03",
+    changes: [
+      "修复 507 处中文翻译截断问题",
+      "新增 Skills 推荐弹窗，支持多选一键安装开发者技能",
+      "Claude Code 插件联动默认开启",
+      "官网下载链接跳转至 GitHub Releases",
+      "新增 obra/superpowers、VoltAgent 等默认 Skill 仓库",
+      "macOS Node.js 安装支持 ARM64 架构与原生密码弹窗",
+    ],
+  },
   {
     version: "1.0.0",
     date: "2026-03-01",
@@ -281,23 +293,24 @@ const joinUrl = (...parts) => {
 };
 
 const setDownloadLinks = () => {
-  const version = SITE_CONFIG.version;
-  const base = joinUrl(SITE_CONFIG.baseUrl, "releases");
+  const releasesUrl = `${SITE_CONFIG.github}/releases`;
+  const latestUrl = `${releasesUrl}/latest`;
   const byId = (id) => document.getElementById(id);
 
-  const msi = byId("dlMsi");
-  const zip = byId("dlZip");
-  const mac = byId("dlMac");
-  const deb = byId("dlDeb");
-  const appImg = byId("dlAppImg");
+  // 所有平台下载按钮都跳转到 GitHub Releases 最新版页面
+  const dlButtons = ["dlMsi", "dlZip", "dlMac", "dlDeb", "dlAppImg"];
+  dlButtons.forEach((id) => {
+    const el = byId(id);
+    if (el) {
+      el.href = latestUrl;
+      el.target = "_blank";
+      el.rel = "noopener noreferrer";
+    }
+  });
 
-  if (msi) msi.href = joinUrl(base, `GuYu-Mate-v${version}-Windows.msi.zip`);
-  if (zip)
-    zip.href = joinUrl(base, `GuYu-Mate-v${version}-Windows-Portable.zip`);
-  if (mac) mac.href = joinUrl(base, `GuYu-Mate-v${version}-macOS.zip`);
-  if (deb) deb.href = joinUrl(base, `GuYu-Mate-v${version}-Linux.deb`);
-  if (appImg)
-    appImg.href = joinUrl(base, `GuYu-Mate-v${version}-Linux.AppImage.tar.gz`);
+  // 导航栏 GitHub 链接
+  const ghLink = byId("navGithub");
+  if (ghLink) ghLink.href = SITE_CONFIG.github;
 };
 
 const setVersionText = () => {

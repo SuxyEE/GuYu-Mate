@@ -605,6 +605,22 @@ code {
   margin-bottom: 8px;
 }
 
+.footer-links {
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text-3);
+}
+
+.footer-links a {
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
 .footer-copy {
   color: var(--text-3);
   font-size: 0.78rem;

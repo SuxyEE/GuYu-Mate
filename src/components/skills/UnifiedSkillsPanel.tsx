@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Sparkles, Trash2, ExternalLink } from "lucide-react";
+import { Trash2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -20,6 +20,7 @@ import { MCP_SKILLS_APP_IDS } from "@/config/appConfig";
 import { AppCountBar } from "@/components/common/AppCountBar";
 import { AppToggleGroup } from "@/components/common/AppToggleGroup";
 import { ListItemRow } from "@/components/common/ListItemRow";
+import { RecommendedSkillsDialog } from "./RecommendedSkillsDialog";
 
 interface UnifiedSkillsPanelProps {
   onOpenDiscovery: () => void;
@@ -168,17 +169,7 @@ const UnifiedSkillsPanel = React.forwardRef<
             {t("skills.loading")}
           </div>
         ) : !skills || skills.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-              <Sparkles size={24} className="text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">
-              {t("skills.noInstalled")}
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              {t("skills.noInstalledDescription")}
-            </p>
-          </div>
+          <RecommendedSkillsDialog onOpenDiscovery={onOpenDiscovery} />
         ) : (
           <TooltipProvider delayDuration={300}>
             <div className="rounded-xl border border-border-default overflow-hidden">
