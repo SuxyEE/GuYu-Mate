@@ -73,6 +73,7 @@ import AgentsDefaultsPanel from "@/components/openclaw/AgentsDefaultsPanel";
 
 import { SetupPage } from "@/components/setup";
 import { Sidebar } from "@/components/layout";
+import { IDEPage } from "@/components/ide/IDEPage";
 
 type View =
   | "providers"
@@ -88,7 +89,8 @@ type View =
   | "openclawEnv"
   | "openclawTools"
   | "openclawAgents"
-  | "setup";
+  | "setup"
+  | "ide";
 
 interface WebDavSyncStatusUpdatedPayload {
   source?: string;
@@ -117,6 +119,7 @@ const VALID_VIEWS: View[] = [
   "openclawTools",
   "openclawAgents",
   "setup",
+  "ide",
 ];
 
 const getInitialView = (): View => {
@@ -705,6 +708,8 @@ function App() {
           return <AgentsDefaultsPanel />;
         case "setup":
           return <SetupPage />;
+        case "ide":
+          return <IDEPage />;
         default:
           return (
             <div className="px-6 flex flex-col h-[calc(100vh-8rem)] overflow-hidden">
@@ -916,6 +921,7 @@ function App() {
                     t("openclaw.agents.title")}
                   {currentView === "setup" &&
                     t("setup.title", { defaultValue: "环境配置" })}
+                  {currentView === "ide" && "AI IDE"}
                 </h1>
               </div>
             ) : (
@@ -1033,7 +1039,10 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 min-h-0 flex flex-col overflow-y-auto animate-fade-in">
+      <main className={cn(
+        "flex-1 min-h-0 flex flex-col animate-fade-in",
+        currentView === "ide" ? "overflow-hidden" : "overflow-y-auto"
+      )}>
         {renderContent()}
       </main>
       </div>

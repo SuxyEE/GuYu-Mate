@@ -9,6 +9,7 @@ import {
   Wrench,
   History,
   Download,
+  Code,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import guyuLogo from "@/assets/icons/guyu-logo.jpg";
@@ -36,7 +37,8 @@ type View =
   | "openclawEnv"
   | "openclawTools"
   | "openclawAgents"
-  | "setup"; // New: Setup/Installation view
+  | "setup"
+  | "ide";
 
 interface SidebarProps {
   currentView: View;
@@ -98,6 +100,15 @@ export function Sidebar({
         {/* Navigation Section */}
         <div className="flex-1 overflow-y-auto p-3">
           <div className="space-y-1">
+            {/* IDE */}
+            <SidebarItem
+              icon={<Code className="h-5 w-5" />}
+              label="IDE"
+              isActive={currentView === "ide"}
+              isCollapsed={isCollapsed}
+              onClick={() => onViewChange("ide")}
+            />
+
             {/* 一键安装 - Setup */}
             <SidebarItem
               icon={<Download className="h-5 w-5" />}

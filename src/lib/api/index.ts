@@ -14,6 +14,7 @@ export { workspaceApi } from "./workspace";
 export type { ProviderSwitchEvent } from "./providers";
 export type { Prompt } from "./prompts";
 export { setupApi } from "./setup";
+export { ideApi } from "./ide";
 export type {
   EnvironmentStatus,
   EnvironmentInfo,
@@ -21,3 +22,4 @@ export type {
   CommandResult,
   CommandOutputEvent,
 } from "./setup";
+export type { IdeProject, FileNode } from "./ide";
