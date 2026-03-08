@@ -18,6 +18,13 @@ export interface FileNode {
   children?: FileNode[];
 }
 
+export interface EditorContext {
+  currentFile?: string;
+  selectedText?: string;
+  cursorPosition?: { line: number; column: number };
+  visibleFiles?: string[];
+}
+
 export const ideApi = {
   // 打开项目
   async openProject(path: string): Promise<IdeProject> {
@@ -45,8 +52,12 @@ export const ideApi = {
   },
 
   // 发送消息到 Claude
-  async sendMessage(projectPath: string, message: string): Promise<void> {
-    return invoke("send_claude_message", { projectPath, message });
+  async sendMessage(
+    projectPath: string,
+    message: string,
+    context?: EditorContext
+  ): Promise<void> {
+    return invoke("send_claude_message", { projectPath, message, context });
   },
 
   // 创建文件

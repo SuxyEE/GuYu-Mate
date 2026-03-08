@@ -56,6 +56,7 @@ export function IDELayout({
 }: IDELayoutProps) {
   const activeFile = openFiles[activeFileIndex];
   const [showSettings, setShowSettings] = useState(false);
+  const [selectedCode, setSelectedCode] = useState<string>("");
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -116,6 +117,7 @@ export function IDELayout({
                             onFileChange(activeFile.path, content)
                           }
                           filePath={activeFile.path}
+                          onSelectionChange={setSelectedCode}
                         />
                       )}
                     </div>
@@ -144,6 +146,7 @@ export function IDELayout({
               projectPath={projectPath}
               onSendMessage={onSendMessage}
               onFileOperations={onFileOperations}
+              selectedCode={selectedCode}
             />
           </div>
         </Panel>

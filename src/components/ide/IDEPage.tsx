@@ -113,7 +113,18 @@ export function IDEPage() {
     if (!projectPath) return;
 
     try {
-      await ideApi.sendMessage(projectPath, message);
+      // 收集编辑器上下文
+      const context = activeFileIndex >= 0 && openFiles[activeFileIndex] ? {
+        currentFile: {
+          path: openFiles[activeFileIndex].path,
+          content: openFiles[activeFileIndex].content,
+          language: openFiles[activeFileIndex].path.split('.').pop() || 'text'
+        },
+        openFiles: openFiles.map(f => f.path),
+        projectPath
+      } : undefined;
+
+      await ideApi.sendMessage(projectPath, message, context);
     } catch (error) {
       toast.error(`发送消息失败: ${error}`);
     }

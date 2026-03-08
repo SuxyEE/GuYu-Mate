@@ -22,11 +22,20 @@ interface FileOperation {
 
 interface AIChatPanelProps {
   projectPath: string;
-  onSendMessage: (message: string) => Promise<void>;
+  context?: {
+    selectedFile?: string;
+    selectedCode?: string;
+    openFiles?: string[];
+  };
+  onSendMessage: (message: string, context?: {
+    selectedFile?: string;
+    selectedCode?: string;
+    openFiles?: string[];
+  }) => Promise<void>;
   onFileOperations?: (ops: FileOperation[]) => void;
 }
 
-export function AIChatPanel({ projectPath, onSendMessage, onFileOperations }: AIChatPanelProps) {
+export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperations }: AIChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -164,7 +173,8 @@ export function AIChatPanel({ projectPath, onSendMessage, onFileOperations }: AI
     setIsLoading(true);
 
     try {
-      await onSendMessage(userMessage);
+      // 传递上下文信息
+      await onSendMessage(userMessage, context);
     } catch (error) {
       console.error("发送消息失败:", error);
     } finally {
