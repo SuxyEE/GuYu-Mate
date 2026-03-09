@@ -1,0 +1,9 @@
+{
+  "name": "guyu-mate-agent-bridge",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.71",
+    "@anthropic-ai/sdk": "^0.78.0"
+  }
+}

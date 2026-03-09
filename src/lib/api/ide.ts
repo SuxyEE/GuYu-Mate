@@ -19,10 +19,9 @@ export interface FileNode {
 }
 
 export interface EditorContext {
-  currentFile?: string;
-  selectedText?: string;
-  cursorPosition?: { line: number; column: number };
-  visibleFiles?: string[];
+  selectedFile?: string;
+  selectedCode?: string;
+  openFiles?: string[];
 }
 
 export const ideApi = {
@@ -83,5 +82,10 @@ export const ideApi = {
   // 更新项目设置
   async updateProjectSettings(projectId: string, settings: string): Promise<void> {
     return invoke("update_ide_project_settings", { projectId, settings });
+  },
+
+  // 启动预览服务器
+  async startPreviewServer(projectPath: string): Promise<string> {
+    return invoke("start_preview_server", { projectPath });
   },
 };

@@ -33,9 +33,10 @@ interface AIChatPanelProps {
     openFiles?: string[];
   }) => Promise<void>;
   onFileOperations?: (ops: FileOperation[]) => void;
+  onAutoPreview?: () => void;
 }
 
-export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperations }: AIChatPanelProps) {
+export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperations, onAutoPreview }: AIChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -107,20 +108,20 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
           break;
 
         case "tool_result":
-          setMessages((prev) => {
-            const last = prev[prev.length - 1];
-            if (last?.role === "assistant") {
-              const resultPreview = agentEvent.result.length > 200
-                ? agentEvent.result.substring(0, 200) + "..."
-                : agentEvent.result;
-              const resultInfo = `\n✅ **结果**: ${resultPreview}`;
-              return [
-                ...prev.slice(0, -1),
-                { ...last, content: last.content + resultInfo },
-              ];
-            }
-            return prev;
-          });
+          // 不显示工具结果，只在出错时显示
+          if (agentEvent.result.includes('错误:')) {
+            setMessages((prev) => {
+              const last = prev[prev.length - 1];
+              if (last?.role === "assistant") {
+                const resultInfo = `\n❌ ${agentEvent.result}`;
+                return [
+                  ...prev.slice(0, -1),
+                  { ...last, content: last.content + resultInfo },
+                ];
+              }
+              return prev;
+            });
+          }
           break;
 
         case "error":
@@ -142,6 +143,9 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
             }
             return prev;
           });
+          if (currentOperations.length > 0) {
+            onAutoPreview?.();
+          }
           setCurrentOperations([]);
           setIsLoading(false);
           break;
@@ -177,7 +181,10 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
       await onSendMessage(userMessage, context);
     } catch (error) {
       console.error("发送消息失败:", error);
-    } finally {
+      setMessages((prev) => [...prev, {
+        role: "assistant",
+        content: `❌ 发送失败: ${error}`,
+      }]);
       setIsLoading(false);
     }
   };
@@ -240,14 +247,14 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
       </div>
 
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-        <div className="space-y-4">
+        <div className="space-y-4 w-full max-w-full">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex min-w-0 w-full ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-full sm:max-w-[85%] rounded-lg p-3 break-words ${
                   msg.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted"
@@ -255,7 +262,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
               >
                 {msg.role === "assistant" ? (
                   <>
-                    <ReactMarkdown className="prose prose-sm dark:prose-invert">
+                    <ReactMarkdown className="prose prose-sm dark:prose-invert max-w-none break-words [&_pre]:overflow-x-auto [&_code]:break-words [&_pre_code]:break-normal">
                       {msg.content}
                     </ReactMarkdown>
                     {msg.operations && msg.operations.length > 0 && (
@@ -281,7 +288,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="max-w-[80%] rounded-lg p-3 bg-muted">
+              <div className="max-w-full sm:max-w-[85%] rounded-lg p-3 bg-muted">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="flex gap-1">
                     <span className="animate-bounce" style={{ animationDelay: "0ms" }}>●</span>

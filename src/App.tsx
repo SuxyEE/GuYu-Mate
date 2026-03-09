@@ -921,7 +921,7 @@ function App() {
                     t("openclaw.agents.title")}
                   {currentView === "setup" &&
                     t("setup.title", { defaultValue: "环境配置" })}
-                  {currentView === "ide" && "AI IDE"}
+                  {currentView === "ide" && "GUYU IDE"}
                 </h1>
               </div>
             ) : (

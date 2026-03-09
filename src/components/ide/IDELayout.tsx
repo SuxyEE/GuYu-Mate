@@ -1,12 +1,19 @@
 // IDE 主布局组件
 import { useState } from "react";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import { X, Settings } from "lucide-react";
+import { X, Settings, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { FileTree } from "./FileTree";
 import { CodeEditor } from "./CodeEditor";
 import { AIChatPanel } from "./AIChatPanel";
 import { TerminalPanel } from "./TerminalPanel";
+import { PreviewPanel } from "./PreviewPanel";
 import { ProjectSettings } from "./ProjectSettings";
 import type { FileNode, IdeProject } from "@/lib/api/ide";
 
@@ -36,6 +43,10 @@ interface IDELayoutProps {
   onRefreshFileTree?: () => void;
   onProjectUpdate?: () => void;
   terminalOutput: string;
+  previewUrl: string | null;
+  onStartPreview: () => void;
+  onPreviewRefresh: () => void;
+  onClosePreview: () => void;
 }
 
 export function IDELayout({
@@ -53,6 +64,10 @@ export function IDELayout({
   onRefreshFileTree,
   onProjectUpdate,
   terminalOutput,
+  previewUrl,
+  onStartPreview,
+  onPreviewRefresh,
+  onClosePreview,
 }: IDELayoutProps) {
   const activeFile = openFiles[activeFileIndex];
   const [showSettings, setShowSettings] = useState(false);
@@ -62,20 +77,22 @@ export function IDELayout({
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 border-b bg-muted/30 flex-shrink-0">
         <span className="text-sm font-medium">{project.name}</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setShowSettings(true)}
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={onStartPreview}>
+            <Eye className="h-4 w-4 mr-1" />
+            预览
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setShowSettings(true)}>
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1 min-h-0">
         <PanelGroup direction="horizontal">
         <Panel defaultSize={20} minSize={15}>
-          <div className="h-full border-r overflow-y-auto">
-            <FileTree nodes={fileTree} onFileClick={onFileClick} onRefresh={onRefreshFileTree} />
+          <div className="h-full border-r">
+            <FileTree nodes={fileTree} onFileClick={onFileClick} onRefresh={onRefreshFileTree} projectPath={projectPath} />
           </div>
         </Panel>
 
@@ -146,7 +163,12 @@ export function IDELayout({
               projectPath={projectPath}
               onSendMessage={onSendMessage}
               onFileOperations={onFileOperations}
-              selectedCode={selectedCode}
+              onAutoPreview={onStartPreview}
+              context={{
+                selectedFile: activeFile?.path,
+                selectedCode: selectedCode || undefined,
+                openFiles: openFiles.map(f => f.path)
+              }}
             />
           </div>
         </Panel>
@@ -159,6 +181,24 @@ export function IDELayout({
           onClose={() => setShowSettings(false)}
           onSave={() => onProjectUpdate?.()}
         />
+      )}
+
+      {previewUrl && (
+        <Dialog open={!!previewUrl} onOpenChange={(open) => { if (!open) onClosePreview(); }}>
+          <DialogContent className="max-w-[90vw] max-h-[90vh] h-[90vh]" zIndex="top">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <DialogTitle>预览</DialogTitle>
+                <Button variant="ghost" size="sm" onClick={onClosePreview}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </DialogHeader>
+            <div className="flex-1 h-full overflow-hidden">
+              <PreviewPanel previewUrl={previewUrl} onRefresh={onPreviewRefresh} />
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );

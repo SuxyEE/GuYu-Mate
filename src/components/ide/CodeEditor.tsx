@@ -1,17 +1,17 @@
 // Monaco Editor 组件
 import { useEffect, useRef } from "react";
-import Editor from "@monaco-editor/react";
+import Editor, { OnMount } from "@monaco-editor/react";
 
 interface CodeEditorProps {
   value: string;
   onChange: (value: string) => void;
   filePath: string;
+  onSelectionChange?: (selectedText: string) => void;
 }
 
-export function CodeEditor({ value, onChange, filePath }: CodeEditorProps) {
+export function CodeEditor({ value, onChange, filePath, onSelectionChange }: CodeEditorProps) {
   const timeoutRef = useRef<NodeJS.Timeout>();
 
-  // 根据文件扩展名检测语言
   const getLanguage = (path: string): string => {
     const ext = path.split(".").pop()?.toLowerCase();
     const langMap: Record<string, string> = {
@@ -31,14 +31,22 @@ export function CodeEditor({ value, onChange, filePath }: CodeEditorProps) {
 
   const handleChange = (newValue: string | undefined) => {
     if (newValue === undefined) return;
-
-    // 防抖保存
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     timeoutRef.current = setTimeout(() => {
       onChange(newValue);
     }, 500);
+  };
+
+  const handleEditorMount: OnMount = (editor) => {
+    editor.onDidChangeCursorSelection(() => {
+      const selection = editor.getSelection();
+      if (selection && onSelectionChange) {
+        const selectedText = editor.getModel()?.getValueInRange(selection) || "";
+        onSelectionChange(selectedText);
+      }
+    });
   };
 
   useEffect(() => {
@@ -55,6 +63,7 @@ export function CodeEditor({ value, onChange, filePath }: CodeEditorProps) {
       language={getLanguage(filePath)}
       value={value}
       onChange={handleChange}
+      onMount={handleEditorMount}
       theme="vs-dark"
       options={{
         minimap: { enabled: false },
