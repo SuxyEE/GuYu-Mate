@@ -18,8 +18,16 @@ rl.on("line", async (line) => {
         cwd: request.projectPath,
         settingSources: ["user", "project"],
         allowedTools: ["Skill","Read", "Write", "Edit", "Bash", "Glob", "Grep", "WebSearch","WebFetch"],
-        // 使用 continue 模式自动管理会话
-        continue: true,
+        // 支持三种模式：
+        // 1. resumeSessionId === "new" -> 强制新会话（不使用 continue 和 resume）
+        // 2. resumeSessionId 存在且不是 "new" -> 恢复指定会话
+        // 3. resumeSessionId 不存在 -> 自动继续最近会话
+        ...(request.resumeSessionId === "new"
+          ? {}
+          : request.resumeSessionId
+            ? { resume: request.resumeSessionId }
+            : { continue: true }
+        ),
       },
     });
 

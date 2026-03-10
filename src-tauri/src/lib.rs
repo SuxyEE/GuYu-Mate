@@ -1,3 +1,4 @@
+mod agent;
 mod app_config;
 mod app_store;
 mod auto_launch;
@@ -11,6 +12,7 @@ mod deeplink;
 mod error;
 mod gemini_config;
 mod gemini_mcp;
+mod ide;
 mod init_status;
 mod mcp;
 mod openclaw_config;
@@ -1051,6 +1053,22 @@ pub fn run() {
             commands::delete_daily_memory_file,
             commands::search_daily_memory_files,
             commands::open_workspace_directory,
+            // IDE management
+            commands::open_ide_project,
+            commands::get_ide_projects,
+            commands::read_file_tree,
+            commands::read_ide_file,
+            commands::write_ide_file,
+            commands::send_claude_message,
+            commands::clear_ide_session,
+            commands::list_ide_sessions,
+            commands::load_ide_session_messages,
+            commands::create_ide_file,
+            commands::create_ide_directory,
+            commands::delete_ide_path,
+            commands::rename_ide_path,
+            commands::start_preview_server,
+            commands::update_ide_project_settings,
             // Setup and environment detection (v3.12.0+)
             commands::detect_node_environment,
             commands::get_cli_install_info,

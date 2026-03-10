@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Send, FileEdit, FilePlus, FileX, Trash2, Sparkles, Code, MessageSquare, Bug, TestTube } from "lucide-react";
+import { Send, FileEdit, FilePlus, FileX, Trash2, Sparkles, Code, MessageSquare, Bug, TestTube, History, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { ideApi, type IdeSession } from "@/lib/api/ide";
 
 interface Message {
   role: "user" | "assistant";
@@ -31,7 +32,7 @@ interface AIChatPanelProps {
     selectedFile?: string;
     selectedCode?: string;
     openFiles?: string[];
-  }) => Promise<void>;
+  }, resumeSessionId?: string) => Promise<void>;
   onFileOperations?: (ops: FileOperation[]) => void;
   onAutoPreview?: () => void;
 }
@@ -41,6 +42,8 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentOperations, setCurrentOperations] = useState<FileOperation[]>([]);
+  const [sessions, setSessions] = useState<IdeSession[]>([]);
+  const [showSessions, setShowSessions] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -177,8 +180,17 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
     setIsLoading(true);
 
     try {
-      // 传递上下文信息
-      await onSendMessage(userMessage, context);
+      // 检查是否需要强制创建新会话
+      const clearedKey = `${getStorageKey()}-cleared`;
+      const forceNew = localStorage.getItem(clearedKey) === "true";
+
+      if (forceNew) {
+        // 清除标记并强制新会话（传递特殊的 resume 值）
+        localStorage.removeItem(clearedKey);
+        await onSendMessage(userMessage, context, "new");
+      } else {
+        await onSendMessage(userMessage, context);
+      }
     } catch (error) {
       console.error("发送消息失败:", error);
       setMessages((prev) => [...prev, {
@@ -189,16 +201,95 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
     }
   };
 
+  const handleNewSession = () => {
+    if (messages.length > 0 && !confirm("确定要创建新会话吗？当前会话将被保存。")) {
+      return;
+    }
+    setMessages([]);
+    localStorage.removeItem(getStorageKey());
+    localStorage.setItem(`${getStorageKey()}-cleared`, "true");
+  };
+
   const handleClearHistory = async () => {
     if (confirm("确定要清空对话历史吗？")) {
       setMessages([]);
       localStorage.removeItem(getStorageKey());
+      localStorage.setItem(`${getStorageKey()}-cleared`, "true");
 
       try {
-        await invoke("clear_ide_session", { projectPath });
+        await ideApi.clearSession(projectPath);
       } catch (error) {
         console.error("清空会话失败:", error);
       }
+    }
+  };
+
+  const handleLoadSessions = async () => {
+    try {
+      const list = await ideApi.listSessions(projectPath);
+      setSessions(list);
+      setShowSessions(true);
+    } catch (error) {
+      console.error("加载会话列表失败:", error);
+    }
+  };
+
+  const handleResumeSession = async (sessionId: string) => {
+    setShowSessions(false);
+    setIsLoading(true);
+    try {
+      const content = await ideApi.loadSessionMessages(projectPath, sessionId);
+      const lines = content.trim().split('\n');
+      const loadedMessages: Message[] = [];
+
+      for (const line of lines) {
+        try {
+          const entry = JSON.parse(line);
+
+          // 只处理 user 和 assistant 类型的消息
+          if (entry.type === 'user' && entry.message) {
+            const msg = entry.message;
+            let text = '';
+
+            // content 可能是字符串或数组
+            if (typeof msg.content === 'string') {
+              text = msg.content;
+            } else if (Array.isArray(msg.content)) {
+              text = msg.content
+                .filter((item: any) => item.type === 'text')
+                .map((item: any) => item.text)
+                .join('\n');
+            }
+
+            if (text) {
+              loadedMessages.push({ role: 'user', content: text });
+            }
+          } else if (entry.type === 'assistant' && entry.message) {
+            const msg = entry.message;
+
+            // assistant 的 content 是数组
+            if (Array.isArray(msg.content)) {
+              const text = msg.content
+                .filter((item: any) => item.type === 'text')
+                .map((item: any) => item.text)
+                .join('\n');
+
+              if (text) {
+                loadedMessages.push({ role: 'assistant', content: text });
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('解析消息失败:', e);
+        }
+      }
+
+      setMessages(loadedMessages);
+      localStorage.setItem(getStorageKey(), JSON.stringify(loadedMessages));
+    } catch (error) {
+      console.error("加载会话失败:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -235,16 +326,72 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between p-2 border-b">
-        <span className="text-sm font-medium">AI 助手</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleClearHistory}
-          disabled={messages.length === 0}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <span className="text-sm font-medium">Claude Code</span>
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNewSession}
+            disabled={isLoading}
+            title="新建会话"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLoadSessions}
+            disabled={isLoading}
+            title="会话历史"
+          >
+            <History className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearHistory}
+            disabled={messages.length === 0}
+            title="清空历史"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
+
+      {showSessions && (
+        <div className="p-2 border-b bg-muted/50">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium">会话历史</span>
+            <Button variant="ghost" size="sm" onClick={() => setShowSessions(false)}>
+              <span className="text-xs">关闭</span>
+            </Button>
+          </div>
+          <ScrollArea className="h-32">
+            {sessions.length === 0 ? (
+              <p className="text-xs text-muted-foreground p-2">暂无历史会话</p>
+            ) : (
+              <div className="space-y-1">
+                {sessions.map((session) => (
+                  <Button
+                    key={session.session_id}
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start text-xs"
+                    onClick={() => handleResumeSession(session.session_id)}
+                  >
+                    <div className="flex flex-col items-start gap-1 w-full">
+                      <span className="truncate w-full">{session.title}</span>
+                      <span className="text-muted-foreground">
+                        {new Date(session.created_at * 1000).toLocaleString()} · {session.message_count} 条消息
+                      </span>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            )}
+          </ScrollArea>
+        </div>
+      )}
 
       <ScrollArea className="flex-1 p-4" ref={scrollRef}>
         <div className="space-y-4 w-full max-w-full">

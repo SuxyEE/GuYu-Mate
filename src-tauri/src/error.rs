@@ -103,6 +103,21 @@ impl From<rusqlite::Error> for AppError {
     }
 }
 
+impl From<std::io::Error> for AppError {
+    fn from(err: std::io::Error) -> Self {
+        Self::IoContext {
+            context: "IO 操作".to_string(),
+            source: err,
+        }
+    }
+}
+
+impl From<serde_json::Error> for AppError {
+    fn from(err: serde_json::Error) -> Self {
+        Self::JsonSerialize { source: err }
+    }
+}
+
 impl From<AppError> for String {
     fn from(err: AppError) -> Self {
         err.to_string()

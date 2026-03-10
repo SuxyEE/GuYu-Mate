@@ -203,11 +203,11 @@ export function IDEPage() {
     selectedFile?: string;
     selectedCode?: string;
     openFiles?: string[];
-  }) => {
+  }, resumeSessionId?: string) => {
     if (!projectPath) return;
 
     try {
-      await ideApi.sendMessage(projectPath, message, chatContext);
+      await ideApi.sendMessage(projectPath, message, chatContext, resumeSessionId);
     } catch (error) {
       toast.error(`发送消息失败: ${error}`);
     }

@@ -24,6 +24,14 @@ export interface EditorContext {
   openFiles?: string[];
 }
 
+export interface IdeSession {
+  session_id: string;
+  project_path: string;
+  created_at: number;
+  message_count: number;
+  title: string;
+}
+
 export const ideApi = {
   // 打开项目
   async openProject(path: string): Promise<IdeProject> {
@@ -54,9 +62,25 @@ export const ideApi = {
   async sendMessage(
     projectPath: string,
     message: string,
-    context?: EditorContext
+    context?: EditorContext,
+    resumeSessionId?: string
   ): Promise<void> {
-    return invoke("send_claude_message", { projectPath, message, context });
+    return invoke("send_claude_message", { projectPath, message, context, resumeSessionId });
+  },
+
+  // 清空会话
+  async clearSession(projectPath: string): Promise<void> {
+    return invoke("clear_ide_session", { projectPath });
+  },
+
+  // 获取会话列表
+  async listSessions(projectPath: string): Promise<IdeSession[]> {
+    return invoke("list_ide_sessions", { projectPath });
+  },
+
+  // 加载会话消息
+  async loadSessionMessages(projectPath: string, sessionId: string): Promise<string> {
+    return invoke("load_ide_session_messages", { projectPath, sessionId });
   },
 
   // 创建文件

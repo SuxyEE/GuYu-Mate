@@ -306,6 +306,35 @@ impl Database {
             [],
         );
 
+        // IDE Projects 表
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS ide_projects (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                path TEXT NOT NULL UNIQUE,
+                created_at INTEGER NOT NULL,
+                last_opened_at INTEGER,
+                description TEXT,
+                settings TEXT
+            )",
+            [],
+        )
+        .map_err(|e| AppError::Database(e.to_string()))?;
+
+        // IDE Sessions 表
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS ide_sessions (
+                id TEXT PRIMARY KEY,
+                project_id TEXT NOT NULL,
+                claude_session_path TEXT,
+                created_at INTEGER NOT NULL,
+                last_active_at INTEGER,
+                FOREIGN KEY (project_id) REFERENCES ide_projects(id) ON DELETE CASCADE
+            )",
+            [],
+        )
+        .map_err(|e| AppError::Database(e.to_string()))?;
+
         Ok(())
     }
 
