@@ -63,14 +63,15 @@ export const ideApi = {
     projectPath: string,
     message: string,
     context?: EditorContext,
-    resumeSessionId?: string
+    resumeSessionId?: string,
+    skillIds?: string[]
   ): Promise<void> {
-    return invoke("send_claude_message", { projectPath, message, context, resumeSessionId });
+    return invoke("send_claude_message", { projectPath, message, context, resumeSessionId, skillIds });
   },
 
   // 清空会话
-  async clearSession(projectPath: string): Promise<void> {
-    return invoke("clear_ide_session", { projectPath });
+  async clearSession(projectPath: string, sessionId: string): Promise<void> {
+    return invoke("clear_ide_session", { projectPath, sessionId });
   },
 
   // 获取会话列表

@@ -3,9 +3,11 @@
 use crate::error::AppError;
 use serde::{Deserialize, Serialize};
 use std::process::Stdio;
+use std::sync::Arc;
 use tauri::{AppHandle, Emitter};
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
-use tokio::process::Command;
+use tokio::process::{Child, Command};
+use tokio::sync::Mutex;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -27,16 +29,69 @@ pub enum FileOperation {
     Delete { path: String },
 }
 
+struct SidecarProcess {
+    _child: Child,
+    stdin: tokio::process::ChildStdin,
+    stdout_reader: Arc<Mutex<tokio::io::Lines<BufReader<tokio::process::ChildStdout>>>>,
+}
+
 pub struct AgentRuntime {
     sidecar_path: String,
     api_key: String,
     base_url: Option<String>,
     app: AppHandle,
+    process: Arc<Mutex<Option<SidecarProcess>>>,
 }
 
 impl AgentRuntime {
     pub fn new(api_key: String, base_url: Option<String>, sidecar_path: String, app: AppHandle) -> Self {
-        Self { api_key, base_url, sidecar_path, app }
+        Self {
+            api_key,
+            base_url,
+            sidecar_path,
+            app,
+            process: Arc::new(Mutex::new(None)),
+        }
+    }
+
+    async fn ensure_process(&self) -> Result<(), AppError> {
+        let mut proc = self.process.lock().await;
+        if proc.is_none() {
+            *proc = Some(self.spawn_sidecar().await?);
+        }
+        Ok(())
+    }
+
+    pub async fn warmup(&self) -> Result<(), AppError> {
+        self.ensure_process().await
+    }
+
+    async fn spawn_sidecar(&self) -> Result<SidecarProcess, AppError> {
+        let mut child = Command::new("node")
+            .arg(&self.sidecar_path)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .map_err(|e| AppError::Message(format!("启动 Sidecar 失败: {}", e)))?;
+
+        let stdin = child.stdin.take().unwrap();
+        let stdout = child.stdout.take().unwrap();
+        let stderr = child.stderr.take().unwrap();
+
+        let _app_clone = self.app.clone();
+        tokio::spawn(async move {
+            let mut err_reader = BufReader::new(stderr).lines();
+            while let Ok(Some(line)) = err_reader.next_line().await {
+                eprintln!("Agent stderr: {}", line);
+            }
+        });
+
+        Ok(SidecarProcess {
+            _child: child,
+            stdin,
+            stdout_reader: Arc::new(Mutex::new(BufReader::new(stdout).lines())),
+        })
     }
 
     pub async fn execute(
@@ -46,31 +101,12 @@ impl AgentRuntime {
         model: String,
         context: Option<crate::commands::ProjectContext>,
         resume_session_id: Option<String>,
+        skills: Option<Vec<String>>,
     ) -> Result<String, AppError> {
-        let mut child = Command::new("node")
-            .arg(&self.sidecar_path)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|e| AppError::Message(format!("启动 Sidecar 失败: {}", e)))?;
+        self.ensure_process().await?;
 
-        let mut stdin = child.stdin.take().unwrap();
-        let stdout = child.stdout.take().unwrap();
-        let stderr = child.stderr.take().unwrap();
-        let mut reader = BufReader::new(stdout).lines();
-        let mut err_reader = BufReader::new(stderr).lines();
-
-        // 异步读取 stderr
-        let app_clone = self.app.clone();
-        tokio::spawn(async move {
-            while let Ok(Some(line)) = err_reader.next_line().await {
-                eprintln!("Agent stderr: {}", line);
-                let _ = app_clone.emit("agent-event", AgentEvent::Error {
-                    message: format!("进程错误: {}", line)
-                });
-            }
-        });
+        let mut proc_guard = self.process.lock().await;
+        let proc = proc_guard.as_mut().ok_or_else(|| AppError::Message("进程未启动".into()))?;
 
         let mut prompt = user_message;
         if let Some(ctx) = context {
@@ -99,18 +135,23 @@ impl AgentRuntime {
             "baseUrl": self.base_url,
             "systemPrompt": self.build_system_prompt(&project_path),
             "resumeSessionId": resume_session_id,
+            "skills": skills,
         });
 
-        stdin.write_all(serde_json::to_string(&request)?.as_bytes()).await?;
-        stdin.write_all(b"\n").await?;
-        drop(stdin);
+        proc.stdin.write_all(serde_json::to_string(&request)?.as_bytes()).await?;
+        proc.stdin.write_all(b"\n").await?;
 
         let mut assistant_response = String::new();
+        let mut reader = proc.stdout_reader.lock().await;
 
         while let Some(line) = reader.next_line().await? {
             if let Ok(event) = serde_json::from_str::<AgentEvent>(&line) {
                 if let AgentEvent::Response { text } = &event {
                     assistant_response.push_str(text);
+                }
+                if matches!(event, AgentEvent::Done) {
+                    self.emit_event(event)?;
+                    break;
                 }
                 self.emit_event(event)?;
             }

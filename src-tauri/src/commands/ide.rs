@@ -5,6 +5,7 @@ use crate::ide;
 use crate::store::AppState;
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::sync::Arc;
 use tauri::{AppHandle, Manager, State};
 
 pub use crate::database::IdeProject;
@@ -19,12 +20,95 @@ pub struct FileNode {
 
 #[tauri::command]
 pub async fn open_ide_project(
+    app: AppHandle,
     state: State<'_, AppState>,
     path: String,
 ) -> Result<IdeProject, String> {
-    ide::open_project(state.db.clone(), path)
+    let project = ide::open_project(state.db.clone(), path.clone())
         .await
-        .map_err(|e| e.to_string())
+        .map_err(|e| e.to_string())?;
+
+    // 在后台预热 Agent Runtime（不阻塞返回）
+    let app_clone = app.clone();
+    let db = state.db.clone();
+    let agent_runtime = state.agent_runtime.clone();
+    tokio::spawn(async move {
+        if let Err(e) = warmup_agent_runtime(app_clone, db, agent_runtime).await {
+            eprintln!("预热 Agent Runtime 失败: {}", e);
+        }
+    });
+
+    Ok(project)
+}
+
+async fn warmup_agent_runtime(
+    app: AppHandle,
+    db: Arc<crate::database::Database>,
+    agent_runtime: Arc<tokio::sync::RwLock<Option<crate::agent::AgentRuntime>>>,
+) -> Result<(), String> {
+    // 获取当前激活的 Claude Provider
+    let current_provider_id = db
+        .get_current_provider("claude")
+        .map_err(|e| e.to_string())?
+        .ok_or_else(|| "未设置当前 Provider".to_string())?;
+
+    let providers = db.get_all_providers("claude").map_err(|e| e.to_string())?;
+    let provider = providers
+        .get(&current_provider_id)
+        .ok_or_else(|| "未找到当前激活的 Provider".to_string())?;
+
+    let env = provider
+        .settings_config
+        .get("env")
+        .and_then(|v| v.as_object())
+        .ok_or("Provider 配置格式错误")?;
+
+    let api_key = env
+        .get("ANTHROPIC_AUTH_TOKEN")
+        .or_else(|| env.get("ANTHROPIC_API_KEY"))
+        .and_then(|v| v.as_str())
+        .ok_or("当前 Provider 未配置 API Key")?
+        .to_string();
+
+    let base_url = env
+        .get("ANTHROPIC_BASE_URL")
+        .and_then(|v| v.as_str())
+        .map(|s| {
+            let mut url = s.trim_end_matches('/').to_string();
+            if url.ends_with("/v1/messages") {
+                url = url.trim_end_matches("/v1/messages").to_string();
+            } else if url.ends_with("/v1") {
+                url = url.trim_end_matches("/v1").to_string();
+            }
+            url
+        });
+
+    let sidecar_path = if cfg!(debug_assertions) {
+        let current = std::env::current_dir().unwrap_or_default();
+        let path = if current.ends_with("src-tauri") {
+            current.join("agent-bridge/index.js")
+        } else {
+            current.join("src-tauri/agent-bridge/index.js")
+        };
+        path.to_str().unwrap_or("agent-bridge/index.js").to_string()
+    } else {
+        app.path()
+            .resource_dir()
+            .ok()
+            .and_then(|p| p.join("agent-bridge/index.js").to_str().map(|s| s.to_string()))
+            .unwrap_or_else(|| "agent-bridge/index.js".to_string())
+    };
+
+    let runtime = crate::agent::AgentRuntime::new(api_key, base_url, sidecar_path, app);
+
+    // 预热进程
+    runtime.warmup().await.map_err(|e| e.to_string())?;
+
+    // 保存到全局状态
+    let mut runtime_guard = agent_runtime.write().await;
+    *runtime_guard = Some(runtime);
+
+    Ok(())
 }
 
 #[tauri::command]
@@ -123,6 +207,7 @@ pub async fn send_claude_message(
     message: String,
     context: Option<ProjectContext>,
     resume_session_id: Option<String>,
+    skill_ids: Option<Vec<String>>,
 ) -> Result<(), String> {
     eprintln!("收到消息: {}", message);
     eprintln!("项目路径: {}", project_path);
@@ -182,14 +267,6 @@ pub async fn send_claude_message(
             url
         });
 
-    // 获取模型名称（默认使用 claude-haiku-4-5-20251001）
-    let model = provider
-        .settings_config
-        .get("model")
-        .and_then(|v| v.as_str())
-        .unwrap_or("claude-haiku-4-5-20251001")
-        .to_string();
-
     // Sidecar 路径
     let sidecar_path = if cfg!(debug_assertions) {
         // 开发环境：使用绝对路径
@@ -211,12 +288,65 @@ pub async fn send_claude_message(
 
     eprintln!("Sidecar 路径: {}", sidecar_path);
 
-    // 创建 runtime 并执行（SDK 自动管理会话）
-    let runtime = crate::agent::AgentRuntime::new(api_key, base_url, sidecar_path, app);
-    runtime
-        .execute(message, project_path, model, context, resume_session_id)
-        .await
-        .map_err(|e| e.to_string())?;
+    // 转换 skill IDs 为目录路径
+    let skill_paths = if let Some(ids) = skill_ids {
+        use crate::services::SkillService;
+        let installed = SkillService::get_all_installed(&state.db)
+            .map_err(|e| e.to_string())?;
+
+        ids.iter()
+            .filter_map(|id| {
+                installed.iter()
+                    .find(|s| &s.id == id)
+                    .map(|s| s.directory.clone())
+            })
+            .collect::<Vec<_>>()
+    } else {
+        vec![]
+    };
+
+    // 获取模型名称
+    let model = provider
+        .settings_config
+        .get("model")
+        .and_then(|v| v.as_str())
+        .unwrap_or("claude-haiku-4-5-20251001")
+        .to_string();
+
+    // 尝试使用全局 runtime
+    let runtime_guard = state.agent_runtime.read().await;
+    if let Some(runtime) = runtime_guard.as_ref() {
+        runtime
+            .execute(message, project_path, model, context, resume_session_id, Some(skill_paths))
+            .await
+            .map_err(|e| e.to_string())?;
+    } else {
+        drop(runtime_guard);
+        // 回退：创建临时 runtime
+        eprintln!("警告: Agent Runtime 未预热，创建临时实例");
+
+        let sidecar_path = if cfg!(debug_assertions) {
+            let current = std::env::current_dir().unwrap_or_default();
+            let path = if current.ends_with("src-tauri") {
+                current.join("agent-bridge/index.js")
+            } else {
+                current.join("src-tauri/agent-bridge/index.js")
+            };
+            path.to_str().unwrap_or("agent-bridge/index.js").to_string()
+        } else {
+            app.path()
+                .resource_dir()
+                .ok()
+                .and_then(|p| p.join("agent-bridge/index.js").to_str().map(|s| s.to_string()))
+                .unwrap_or_else(|| "agent-bridge/index.js".to_string())
+        };
+
+        let runtime = crate::agent::AgentRuntime::new(api_key, base_url, sidecar_path, app);
+        runtime
+            .execute(message, project_path, model, context, resume_session_id, Some(skill_paths))
+            .await
+            .map_err(|e| e.to_string())?;
+    }
 
     Ok(())
 }
@@ -224,8 +354,9 @@ pub async fn send_claude_message(
 #[tauri::command]
 pub async fn clear_ide_session(
     project_path: String,
+    session_id: String,
 ) -> Result<(), String> {
-    // 清理官方 SDK 的会话文件
+    // 删除指定的会话文件
     let home = std::env::var("HOME")
         .or_else(|_| std::env::var("USERPROFILE"))
         .map_err(|_| "无法获取用户目录".to_string())?;
@@ -236,11 +367,11 @@ pub async fn clear_ide_session(
         .trim_matches('-')
         .to_string();
 
-    let sessions_dir = format!("{}/.claude/projects/{}", home, project_slug);
+    let session_file = format!("{}/.claude/projects/{}/{}.jsonl", home, project_slug, session_id);
 
-    if std::path::Path::new(&sessions_dir).exists() {
-        std::fs::remove_dir_all(&sessions_dir)
-            .map_err(|e| format!("清理会话文件失败: {}", e))?;
+    if std::path::Path::new(&session_file).exists() {
+        std::fs::remove_file(&session_file)
+            .map_err(|e| format!("删除会话文件失败: {}", e))?;
     }
 
     Ok(())
@@ -338,9 +469,31 @@ pub async fn start_preview_server(project_path: String) -> Result<String, String
         return Ok(format!("http://localhost:{}", port));
     }
 
-    // 静态 HTML 项目
+    // 静态 HTML 项目 - 启动简单的 HTTP 服务器
     if path.join("index.html").exists() {
-        return Ok(format!("file://{}/index.html", project_path));
+        let port = 8080; // 静态服务器端口
+        let project_path_clone = project_path.clone();
+
+        tauri::async_runtime::spawn(async move {
+            use axum::Router;
+            use tower_http::services::ServeDir;
+            use std::net::SocketAddr;
+
+            let serve_dir = ServeDir::new(&project_path_clone)
+                .append_index_html_on_directories(true);
+
+            let app = Router::new().fallback_service(serve_dir);
+            let addr = SocketAddr::from(([127, 0, 0, 1], port));
+
+            if let Ok(listener) = tokio::net::TcpListener::bind(addr).await {
+                eprintln!("静态服务器启动在 http://localhost:{}", port);
+                let _ = axum::serve(listener, app).await;
+            } else {
+                eprintln!("无法绑定端口 {}", port);
+            }
+        });
+
+        return Ok(format!("http://localhost:{}", port));
     }
 
     Err("无法识别项目类型".to_string())
@@ -434,9 +587,9 @@ pub async fn list_ide_sessions(project_path: String) -> Result<Vec<IdeSession>, 
                                     };
 
                                     if !text.is_empty() {
-                                        // 截取前50个字符作为标题
-                                        title = if text.len() > 50 {
-                                            format!("{}...", &text[..50])
+                                        // 截取前50个字符作为标题（安全处理 UTF-8 边界）
+                                        title = if text.chars().count() > 50 {
+                                            format!("{}...", text.chars().take(50).collect::<String>())
                                         } else {
                                             text
                                         };

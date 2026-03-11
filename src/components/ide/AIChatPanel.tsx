@@ -1,14 +1,16 @@
 // AI 对话面板组件
 import { useState, useEffect, useRef } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Send, FileEdit, FilePlus, FileX, Trash2, Sparkles, Code, MessageSquare, Bug, TestTube, History, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { ideApi, type IdeSession } from "@/lib/api/ide";
+import { useInstalledSkills } from "@/hooks/useSkills";
 
 interface Message {
   role: "user" | "assistant";
@@ -32,7 +34,7 @@ interface AIChatPanelProps {
     selectedFile?: string;
     selectedCode?: string;
     openFiles?: string[];
-  }, resumeSessionId?: string) => Promise<void>;
+  }, resumeSessionId?: string, skillIds?: string[]) => Promise<void>;
   onFileOperations?: (ops: FileOperation[]) => void;
   onAutoPreview?: () => void;
 }
@@ -44,10 +46,16 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
   const [currentOperations, setCurrentOperations] = useState<FileOperation[]>([]);
   const [sessions, setSessions] = useState<IdeSession[]>([]);
   const [showSessions, setShowSessions] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [showSkillsPopover, setShowSkillsPopover] = useState(false);
+  const [currentSessionId, setCurrentSessionId] = useState<string>("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const { data: installedSkills = [] } = useInstalledSkills();
+
   const getStorageKey = () => `ide-session-${projectPath}`;
+  const getSkillsStorageKey = () => `ide-skills-${projectPath}`;
 
   useEffect(() => {
     const key = getStorageKey();
@@ -59,6 +67,17 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
         console.error("加载会话失败:", error);
       }
     }
+
+    // 加载保存的 Skills 选择
+    const skillsKey = getSkillsStorageKey();
+    const savedSkills = localStorage.getItem(skillsKey);
+    if (savedSkills) {
+      try {
+        setSelectedSkills(JSON.parse(savedSkills));
+      } catch (error) {
+        console.error("加载 Skills 选择失败:", error);
+      }
+    }
   }, [projectPath]);
 
   useEffect(() => {
@@ -67,6 +86,11 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
       localStorage.setItem(key, JSON.stringify(messages));
     }
   }, [messages, projectPath]);
+
+  useEffect(() => {
+    const skillsKey = getSkillsStorageKey();
+    localStorage.setItem(skillsKey, JSON.stringify(selectedSkills));
+  }, [selectedSkills, projectPath]);
 
   useEffect(() => {
     const unlisten = listen<any>("agent-event", (event) => {
@@ -136,6 +160,9 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
           break;
 
         case "done":
+          if (agentEvent.session_id) {
+            setCurrentSessionId(agentEvent.session_id);
+          }
           setMessages((prev) => {
             const last = prev[prev.length - 1];
             if (last?.role === "assistant" && currentOperations.length > 0) {
@@ -180,16 +207,14 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
     setIsLoading(true);
 
     try {
-      // 检查是否需要强制创建新会话
       const clearedKey = `${getStorageKey()}-cleared`;
       const forceNew = localStorage.getItem(clearedKey) === "true";
 
       if (forceNew) {
-        // 清除标记并强制新会话（传递特殊的 resume 值）
         localStorage.removeItem(clearedKey);
-        await onSendMessage(userMessage, context, "new");
+        await onSendMessage(userMessage, context, "new", selectedSkills);
       } else {
-        await onSendMessage(userMessage, context);
+        await onSendMessage(userMessage, context, undefined, selectedSkills);
       }
     } catch (error) {
       console.error("发送消息失败:", error);
@@ -206,20 +231,30 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
       return;
     }
     setMessages([]);
+    setSelectedSkills([]);
     localStorage.removeItem(getStorageKey());
+    localStorage.removeItem(getSkillsStorageKey());
     localStorage.setItem(`${getStorageKey()}-cleared`, "true");
   };
 
   const handleClearHistory = async () => {
-    if (confirm("确定要清空对话历史吗？")) {
+    if (!currentSessionId) {
+      alert("当前没有活动会话");
+      return;
+    }
+
+    if (confirm("确定要删除当前会话吗？")) {
       setMessages([]);
+      setSelectedSkills([]);
       localStorage.removeItem(getStorageKey());
+      localStorage.removeItem(getSkillsStorageKey());
       localStorage.setItem(`${getStorageKey()}-cleared`, "true");
 
       try {
-        await ideApi.clearSession(projectPath);
+        await ideApi.clearSession(projectPath, currentSessionId);
+        setCurrentSessionId("");
       } catch (error) {
-        console.error("清空会话失败:", error);
+        console.error("删除会话失败:", error);
       }
     }
   };
@@ -466,6 +501,72 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
               {skill.label}
             </Button>
           ))}
+
+          <Popover open={showSkillsPopover} onOpenChange={setShowSkillsPopover}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isLoading}
+                className="text-xs"
+              >
+                <Sparkles className="h-3 w-3 mr-1" />
+                Skills
+                {selectedSkills.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 h-4 px-1 text-xs">
+                    {selectedSkills.length}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm">选择 Skills</h4>
+                <ScrollArea className="h-64">
+                  {installedSkills.length === 0 ? (
+                    <p className="text-xs text-muted-foreground p-2">
+                      暂无已安装的 Skills
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {installedSkills.map((skill) => (
+                        <div
+                          key={skill.id}
+                          className="flex items-start gap-2 p-2 rounded hover:bg-muted cursor-pointer"
+                          onClick={() => {
+                            setSelectedSkills((prev) =>
+                              prev.includes(skill.id)
+                                ? prev.filter((id) => id !== skill.id)
+                                : [...prev, skill.id]
+                            );
+                          }}
+                        >
+                          <Checkbox
+                            checked={selectedSkills.includes(skill.id)}
+                            onCheckedChange={(checked) => {
+                              setSelectedSkills((prev) =>
+                                checked
+                                  ? [...prev, skill.id]
+                                  : prev.filter((id) => id !== skill.id)
+                              );
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium">{skill.name}</p>
+                            {skill.description && (
+                              <p className="text-xs text-muted-foreground line-clamp-2">
+                                {skill.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="flex gap-2">
           <Textarea

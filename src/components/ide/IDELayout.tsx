@@ -99,60 +99,50 @@ export function IDELayout({
         <PanelResizeHandle className="w-1 bg-border hover:bg-primary transition-colors" />
 
         <Panel defaultSize={50} minSize={30}>
-          <PanelGroup direction="vertical">
-            <Panel defaultSize={70} minSize={40}>
-              <div className="h-full flex flex-col">
-                {openFiles.length > 0 ? (
-                  <>
-                    <div className="flex items-center border-b bg-muted/30 overflow-x-auto">
-                      {openFiles.map((file, index) => (
-                        <div
-                          key={file.path}
-                          className={`flex items-center gap-2 px-3 py-2 border-r cursor-pointer hover:bg-muted ${
-                            index === activeFileIndex ? "bg-background" : ""
-                          }`}
-                          onClick={() => onTabChange(index)}
-                        >
-                          <span className="text-sm">{file.name}</span>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onCloseFile(index);
-                            }}
-                            className="hover:bg-muted-foreground/20 rounded p-0.5"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </div>
-                      ))}
+          <div className="h-full flex flex-col">
+            {openFiles.length > 0 ? (
+              <>
+                <div className="flex items-center border-b bg-muted/30 overflow-x-auto">
+                  {openFiles.map((file, index) => (
+                    <div
+                      key={file.path}
+                      className={`flex items-center gap-2 px-3 py-2 border-r cursor-pointer hover:bg-muted ${
+                        index === activeFileIndex ? "bg-background" : ""
+                      }`}
+                      onClick={() => onTabChange(index)}
+                    >
+                      <span className="text-sm">{file.name}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onCloseFile(index);
+                        }}
+                        className="hover:bg-muted-foreground/20 rounded p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </div>
-                    <div className="flex-1">
-                      {activeFile && (
-                        <CodeEditor
-                          value={activeFile.content}
-                          onChange={(content) =>
-                            onFileChange(activeFile.path, content)
-                          }
-                          filePath={activeFile.path}
-                          onSelectionChange={setSelectedCode}
-                        />
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div className="h-full flex items-center justify-center text-muted-foreground">
-                    选择一个文件开始编辑
-                  </div>
-                )}
+                  ))}
+                </div>
+                <div className="flex-1">
+                  {activeFile && (
+                    <CodeEditor
+                      value={activeFile.content}
+                      onChange={(content) =>
+                        onFileChange(activeFile.path, content)
+                      }
+                      filePath={activeFile.path}
+                      onSelectionChange={setSelectedCode}
+                    />
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="h-full flex items-center justify-center text-muted-foreground">
+                选择一个文件开始编辑
               </div>
-            </Panel>
-
-            <PanelResizeHandle className="h-1 bg-border hover:bg-primary transition-colors" />
-
-            <Panel defaultSize={30} minSize={20}>
-              <TerminalPanel output={terminalOutput} />
-            </Panel>
-          </PanelGroup>
+            )}
+          </div>
         </Panel>
 
         <PanelResizeHandle className="w-1 bg-border hover:bg-primary transition-colors" />
