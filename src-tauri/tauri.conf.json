@@ -61,8 +61,7 @@
       }
     },
     "updater": {
-      "active": false,
-      "pubkey": ""
+      "active": false
     }
   }
 }
