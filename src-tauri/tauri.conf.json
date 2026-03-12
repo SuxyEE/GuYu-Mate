@@ -45,11 +45,6 @@
       "icons/icon.ico"
     ],
     "resources": ["agent-bridge/**/*"],
-    "windows": {
-      "wix": {
-        "template": "wix/per-user-main.wxs"
-      }
-    },
     "macOS": {
       "minimumSystemVersion": "10.15"
     }

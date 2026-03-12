@@ -105,7 +105,7 @@ jobs:
 
       - name: Build Tauri App (Windows)
         if: runner.os == 'Windows'
-        run: pnpm tauri build
+        run: pnpm tauri build --bundles nsis
 
       - name: Build Tauri App (Linux)
         if: runner.os == 'Linux'
@@ -157,28 +157,27 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force -Path release-assets | Out-Null
-          $VERSION = $env:GITHUB_REF_NAME  # e.g., v3.5.0
-          # 仅打包 MSI 安装器 + .sig（用于 Updater）
-          $msi = Get-ChildItem -Path 'src-tauri/target/release/bundle/msi' -Recurse -Include *.msi -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($null -eq $msi) {
-            # 兜底：全局搜索 .msi
-            $msi = Get-ChildItem -Path 'src-tauri/target/release/bundle' -Recurse -Include *.msi -ErrorAction SilentlyContinue | Select-Object -First 1
+          $VERSION = $env:GITHUB_REF_NAME
+          # NSIS installer (.exe) - 支持中文路径，替代 WiX MSI
+          $nsis = Get-ChildItem -Path 'src-tauri/target/release/bundle/nsis' -Recurse -Include *.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($null -eq $nsis) {
+            $nsis = Get-ChildItem -Path 'src-tauri/target/release/bundle' -Recurse -Include *.exe -Exclude guyu-mate.exe -ErrorAction SilentlyContinue | Select-Object -First 1
           }
-          if ($null -ne $msi) {
-            $dest = "GuYu-Mate-$VERSION-Windows.msi"
-            Copy-Item $msi.FullName (Join-Path release-assets $dest)
-            Write-Host "Installer copied: $dest"
-            $sigPath = "$($msi.FullName).sig"
+          if ($null -ne $nsis) {
+            $dest = "GuYu-Mate-$VERSION-Windows-Setup.exe"
+            Copy-Item $nsis.FullName (Join-Path release-assets $dest)
+            Write-Host "NSIS installer copied: $dest"
+            $sigPath = "$($nsis.FullName).sig"
             if (Test-Path $sigPath) {
               Copy-Item $sigPath (Join-Path release-assets ("$dest.sig"))
               Write-Host "Signature copied: $dest.sig"
             } else {
-              Write-Warning "Signature not found for $($msi.Name)"
+              Write-Warning "Signature not found for $($nsis.Name)"
             }
           } else {
-            Write-Warning 'No Windows MSI installer found'
+            Write-Warning 'No Windows NSIS installer found'
           }
-          # 绿色版（portable）：仅可执行文件打 zip（不参与 Updater）
+          # 绿色版（portable）：仅可执行文件打 zip
           $exeCandidates = @(
             'src-tauri/target/release/guyu-mate.exe',
             'src-tauri/target/x86_64-pc-windows-msvc/release/guyu-mate.exe'
@@ -189,11 +188,7 @@ jobs:
             New-Item -ItemType Directory -Force -Path $portableDir | Out-Null
             Copy-Item $exePath $portableDir
             $portableIniPath = Join-Path $portableDir 'portable.ini'
-            $portableContent = @(
-              '# GuYu Mate portable build marker',
-              'portable=true'
-            )
-            $portableContent | Set-Content -Path $portableIniPath -Encoding UTF8
+            @('# GuYu Mate portable build marker', 'portable=true') | Set-Content -Path $portableIniPath -Encoding UTF8
             $portableZip = "release-assets/GuYu-Mate-$VERSION-Windows-Portable.zip"
             Compress-Archive -Path "$portableDir/*" -DestinationPath $portableZip -Force
             Remove-Item -Recurse -Force $portableDir
