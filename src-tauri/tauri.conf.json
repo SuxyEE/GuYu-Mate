@@ -59,6 +59,9 @@
       "desktop": {
         "schemes": ["guyumate"]
       }
+    },
+    "updater": {
+      "active": false
     }
   }
 }
