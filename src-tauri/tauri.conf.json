@@ -44,9 +44,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "resources": [
-      "agent-bridge/**/*"
-    ],
+    "resources": ["agent-bridge/**/*"],
     "windows": {
       "wix": {
         "template": "wix/per-user-main.wxs"
@@ -61,5 +59,6 @@
       "desktop": {
         "schemes": ["guyumate"]
       }
-      }
     }
+  }
+}
