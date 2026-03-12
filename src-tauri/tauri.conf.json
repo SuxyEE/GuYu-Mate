@@ -62,11 +62,4 @@
         "schemes": ["guyumate"]
       }
     },
-    "updater": {
-      "endpoints": [
-        "https://github.com/SuxyEE/GuYu-Mate/releases/latest/download/latest.json",
-        "https://github.com/SuxyEE/GuYu-Mate/releases/latest/download/latest.json"
-      ]
-    }
-  }
 }
