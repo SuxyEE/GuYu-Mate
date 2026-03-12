@@ -41,6 +41,7 @@ interface IDELayoutProps {
   onSendMessage: (message: string) => Promise<void>;
   onFileOperations?: (ops: FileOperation[]) => void;
   onRefreshFileTree?: () => void;
+  onFileDelete?: (path: string) => void;
   onProjectUpdate?: () => void;
   terminalOutput: string;
   previewUrl: string | null;
@@ -62,6 +63,7 @@ export function IDELayout({
   onSendMessage,
   onFileOperations,
   onRefreshFileTree,
+  onFileDelete,
   onProjectUpdate,
   terminalOutput,
   previewUrl,
@@ -92,7 +94,7 @@ export function IDELayout({
         <PanelGroup direction="horizontal">
         <Panel defaultSize={20} minSize={15}>
           <div className="h-full border-r">
-            <FileTree nodes={fileTree} onFileClick={onFileClick} onRefresh={onRefreshFileTree} projectPath={projectPath} />
+            <FileTree nodes={fileTree} onFileClick={onFileClick} onRefresh={onRefreshFileTree} onFileDelete={onFileDelete} projectPath={projectPath} />
           </div>
         </Panel>
 

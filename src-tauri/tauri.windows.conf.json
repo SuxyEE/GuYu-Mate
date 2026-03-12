@@ -4,7 +4,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "GuYu Mate",
+        "title": "谷雨大模型应用开发平台",
         "titleBarStyle": "Visible",
         "visible": false,
         "minWidth": 900,

@@ -1,5 +1,6 @@
 // IDE 页面容器组件
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
 import { Button } from "@/components/ui/button";
 import { FolderOpen } from "lucide-react";
@@ -11,6 +12,7 @@ interface OpenFile {
   path: string;
   content: string;
   name: string;
+  lastModified?: number;
 }
 
 interface FileOperation {
@@ -24,7 +26,7 @@ interface RecentProject {
   lastOpened: number;
 }
 
-export function IDEPage() {
+export const IDEPage = forwardRef<{ closeProject: () => void }>(function IDEPage(_, ref) {
   const [project, setProject] = useState<IdeProject | null>(null);
   const [projectPath, setProjectPath] = useState<string | null>(null);
   const [fileTree, setFileTree] = useState<FileNode[]>([]);
@@ -33,6 +35,15 @@ export function IDEPage() {
   const [terminalOutput, setTerminalOutput] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+
+  useImperativeHandle(ref, () => ({
+    closeProject: () => {
+      setProject(null);
+      setProjectPath(null);
+      setOpenFiles([]);
+      setActiveFileIndex(-1);
+    }
+  }));
 
   const refreshFileTree = async () => {
     if (!projectPath) return;
@@ -109,6 +120,37 @@ export function IDEPage() {
     localStorage.setItem(key, JSON.stringify(state));
   }, [projectPath, openFiles, activeFileIndex]);
 
+  // 监听文件变化
+  useEffect(() => {
+    if (!projectPath) return;
+
+    const unlisten = listen<string[]>("file-changed", async (event) => {
+      const changedPaths = event.payload;
+
+      // 刷新文件树
+      await refreshFileTree();
+
+      // 刷新已打开的文件
+      for (const changedPath of changedPaths) {
+        const openFileIndex = openFiles.findIndex(f => f.path === changedPath);
+        if (openFileIndex !== -1) {
+          try {
+            const content = await ideApi.readFile(changedPath);
+            setOpenFiles(prev => prev.map((f, i) =>
+              i === openFileIndex ? { ...f, content } : f
+            ));
+          } catch (error) {
+            console.error("刷新文件内容失败:", error);
+          }
+        }
+      }
+    });
+
+    return () => {
+      unlisten.then(fn => fn());
+    };
+  }, [projectPath, openFiles]);
+
   const handleOpenProject = async () => {
     try {
       const selected = await open({
@@ -117,6 +159,12 @@ export function IDEPage() {
       });
 
       if (selected && typeof selected === "string") {
+        // 关闭旧项目的预览
+        if (projectPath && previewUrl) {
+          await ideApi.stopPreviewServer(projectPath);
+        }
+        setPreviewUrl(null);
+
         const proj = await ideApi.openProject(selected);
         setProject(proj);
         setProjectPath(proj.path);
@@ -134,6 +182,12 @@ export function IDEPage() {
 
   const handleOpenRecentProject = async (path: string) => {
     try {
+      // 关闭旧项目的预览
+      if (projectPath && previewUrl) {
+        await ideApi.stopPreviewServer(projectPath);
+      }
+      setPreviewUrl(null);
+
       const proj = await ideApi.openProject(path);
       setProject(proj);
       setProjectPath(proj.path);
@@ -187,6 +241,27 @@ export function IDEPage() {
     }
   };
 
+  const handleFileDelete = (deletedPath: string) => {
+    // 关闭被删除文件的标签页
+    const deletedIndices = openFiles
+      .map((file, index) => (file.path === deletedPath ? index : -1))
+      .filter(index => index !== -1);
+
+    if (deletedIndices.length > 0) {
+      const newFiles = openFiles.filter(file => file.path !== deletedPath);
+      setOpenFiles(newFiles);
+
+      // 调整活动标签索引
+      if (deletedIndices.includes(activeFileIndex)) {
+        // 如果删除的是当前活动标签，切换到前一个或后一个
+        setActiveFileIndex(Math.max(0, Math.min(activeFileIndex, newFiles.length - 1)));
+      } else if (activeFileIndex > deletedIndices[0]) {
+        // 如果删除的标签在当前活动标签之前，索引需要减1
+        setActiveFileIndex(activeFileIndex - 1);
+      }
+    }
+  };
+
   const handleFileOperations = (ops: FileOperation[]) => {
     if (ops.length > 0) {
       refreshFileTree();
@@ -228,15 +303,23 @@ export function IDEPage() {
     // 刷新逻辑由 PreviewPanel 内部处理
   };
 
-  const handleClosePreview = () => {
-    setPreviewUrl(null);
+  const handleClosePreview = async () => {
+    if (!projectPath) return;
+    try {
+      await ideApi.stopPreviewServer(projectPath);
+      setPreviewUrl(null);
+      toast.success("预览已停止");
+    } catch (error) {
+      console.error("停止预览失败:", error);
+      setPreviewUrl(null);
+    }
   };
 
   if (!projectPath || !project) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center space-y-4 max-w-2xl">
-          <h2 className="text-2xl font-semibold">欢迎使用 GuYu IDE</h2>
+          <h2 className="text-2xl font-semibold">欢迎使用谷雨助手</h2>
           <p className="text-muted-foreground">
             打开一个项目开始使用 AI 辅助开发
           </p>
@@ -282,6 +365,7 @@ export function IDEPage() {
         onSendMessage={handleSendMessage}
         onFileOperations={handleFileOperations}
         onRefreshFileTree={refreshFileTree}
+        onFileDelete={handleFileDelete}
         onProjectUpdate={async () => {
           const proj = await ideApi.openProject(projectPath);
           setProject(proj);
@@ -294,4 +378,4 @@ export function IDEPage() {
       />
     </div>
   );
-}
+});

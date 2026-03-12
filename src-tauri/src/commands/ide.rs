@@ -38,6 +38,16 @@ pub async fn open_ide_project(
         }
     });
 
+    // 启动文件监听
+    let file_watcher = state.file_watcher.clone();
+    let app_clone2 = app.clone();
+    let watch_path = path.clone();
+    tokio::spawn(async move {
+        if let Err(e) = file_watcher.watch_project(app_clone2, watch_path).await {
+            eprintln!("文件监听启动失败: {}", e);
+        }
+    });
+
     Ok(project)
 }
 
@@ -403,7 +413,10 @@ pub async fn rename_ide_path(old_path: String, new_path: String) -> Result<(), S
 }
 
 #[tauri::command]
-pub async fn start_preview_server(project_path: String) -> Result<String, String> {
+pub async fn start_preview_server(
+    state: State<'_, AppState>,
+    project_path: String,
+) -> Result<String, String> {
     use std::process::Command;
     use std::fs;
 
@@ -471,32 +484,80 @@ pub async fn start_preview_server(project_path: String) -> Result<String, String
 
     // 静态 HTML 项目 - 启动简单的 HTTP 服务器
     if path.join("index.html").exists() {
-        let port = 8080; // 静态服务器端口
-        let project_path_clone = project_path.clone();
+        // 先关闭该项目的旧服务器
+        {
+            let mut servers = state.preview_servers.write().await;
+            if let Some((_, handle)) = servers.remove(&project_path) {
+                handle.abort();
+            }
+        }
 
-        tauri::async_runtime::spawn(async move {
+        // 尝试找到可用端口
+        let mut port = 8080;
+        let max_attempts = 10;
+        let mut listener = None;
+
+        for _ in 0..max_attempts {
+            let addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
+            match tokio::net::TcpListener::bind(addr).await {
+                Ok(l) => {
+                    listener = Some(l);
+                    break;
+                }
+                Err(_) => {
+                    port += 1;
+                }
+            }
+        }
+
+        let listener = listener.ok_or_else(|| "无法找到可用端口".to_string())?;
+        let project_path_clone = project_path.clone();
+        let servers = state.preview_servers.clone();
+        let port_clone = port;
+
+        let handle = tokio::spawn(async move {
             use axum::Router;
             use tower_http::services::ServeDir;
-            use std::net::SocketAddr;
+            use tower_http::set_header::SetResponseHeaderLayer;
+            use http::header::{CACHE_CONTROL, HeaderValue};
 
             let serve_dir = ServeDir::new(&project_path_clone)
                 .append_index_html_on_directories(true);
 
-            let app = Router::new().fallback_service(serve_dir);
-            let addr = SocketAddr::from(([127, 0, 0, 1], port));
+            let app = Router::new()
+                .fallback_service(serve_dir)
+                .layer(SetResponseHeaderLayer::if_not_present(
+                    CACHE_CONTROL,
+                    HeaderValue::from_static("no-cache, no-store, must-revalidate"),
+                ));
 
-            if let Ok(listener) = tokio::net::TcpListener::bind(addr).await {
-                eprintln!("静态服务器启动在 http://localhost:{}", port);
-                let _ = axum::serve(listener, app).await;
-            } else {
-                eprintln!("无法绑定端口 {}", port);
-            }
+            eprintln!("静态服务器启动在 http://localhost:{}", port_clone);
+            let _ = axum::serve(listener, app).await;
         });
+
+        // 保存服务器句柄
+        {
+            let mut servers_map = servers.write().await;
+            servers_map.insert(project_path.clone(), (port, handle.abort_handle()));
+        }
 
         return Ok(format!("http://localhost:{}", port));
     }
 
     Err("无法识别项目类型".to_string())
+}
+
+#[tauri::command]
+pub async fn stop_preview_server(
+    state: State<'_, AppState>,
+    project_path: String,
+) -> Result<(), String> {
+    let mut servers = state.preview_servers.write().await;
+    if let Some((port, handle)) = servers.remove(&project_path) {
+        handle.abort();
+        eprintln!("已停止端口 {} 的预览服务器", port);
+    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -587,11 +648,18 @@ pub async fn list_ide_sessions(project_path: String) -> Result<Vec<IdeSession>, 
                                     };
 
                                     if !text.is_empty() {
-                                        // 截取前50个字符作为标题（安全处理 UTF-8 边界）
-                                        title = if text.chars().count() > 50 {
-                                            format!("{}...", text.chars().take(50).collect::<String>())
+                                        // 移除 [上下文] 部分
+                                        let clean_text = if let Some(idx) = text.find("\n\n[上下文]\n") {
+                                            &text[..idx]
                                         } else {
-                                            text
+                                            &text
+                                        };
+
+                                        // 截取前50个字符作为标题（安全处理 UTF-8 边界）
+                                        title = if clean_text.chars().count() > 50 {
+                                            format!("{}...", clean_text.chars().take(50).collect::<String>())
+                                        } else {
+                                            clean_text.to_string()
                                         };
                                         break;
                                     }

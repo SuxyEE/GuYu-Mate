@@ -10,9 +10,13 @@ import {
   History,
   Download,
   Code,
+  Users,
+  Building2,
+  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import guyuLogo from "@/assets/icons/guyu-logo.jpg";
+import guyuLogo from "@/assets/icons/guyulogo.png";
+import sidebarBg from "@/assets/icons/xmulogo.png";
 import { McpIcon } from "@/components/BrandIcons";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +42,9 @@ type View =
   | "openclawTools"
   | "openclawAgents"
   | "setup"
-  | "ide";
+  | "ide"
+  | "users"
+  | "organizations";
 
 interface SidebarProps {
   currentView: View;
@@ -65,16 +71,29 @@ export function Sidebar({
   return (
     <TooltipProvider delayDuration={0}>
       <motion.aside
-        className="h-full flex flex-col border-r border-border bg-muted/30 relative"
+        className="h-full flex flex-col border-r border-border relative overflow-hidden"
         initial={false}
         animate={{ width: sidebarWidth }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
       >
+        {/* 背景图层 */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${sidebarBg})`,
+            backgroundSize: '100%',
+            backgroundPosition: 'center calc(100% - 40px)',
+            backgroundRepeat: 'no-repeat',
+            zIndex: 0,
+            pointerEvents: 'none'
+          }}
+        />
         {/* Collapse Toggle */}
         <Button
           variant="ghost"
           size="icon"
-          className="absolute -right-3 top-4 z-10 h-6 w-6 rounded-full border bg-background shadow-sm hover:bg-muted"
+          className="absolute -right-3 top-4 h-6 w-6 rounded-full border bg-background shadow-sm hover:bg-muted"
+          style={{ zIndex: 10 }}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           {isCollapsed ? (
@@ -85,48 +104,53 @@ export function Sidebar({
         </Button>
 
         {/* App Brand */}
-        <div className="p-3 border-b border-border">
+        <div className="p-3 border-b border-border relative" style={{ zIndex: 2 }}>
           <SidebarItem
             icon={
-              <img src={guyuLogo} alt="GuYu Mate" className="w-5 h-5 rounded-sm object-cover" />
+              <img src={guyuLogo} alt="GuYu Mate" className="w-8 h-8 rounded-sm object-contain" />
             }
-            label="GuYu Mate"
+            label="谷雨助手"
             isActive={false}
             isCollapsed={isCollapsed}
             onClick={() => onViewChange("providers")}
           />
+          {!isCollapsed && (
+            <div className="mt-1.5 text-xs text-muted-foreground font-medium">
+              厦门大学谷雨大模型创新实验室
+            </div>
+          )}
         </div>
 
         {/* Navigation Section */}
-        <div className="flex-1 overflow-y-auto p-3">
+        <div className="flex-1 overflow-y-auto p-3 relative" style={{ zIndex: 2 }}>
           <div className="space-y-1">
             {/* IDE */}
             <SidebarItem
               icon={<Code className="h-5 w-5" />}
-              label="IDE"
+              label="工作台"
               isActive={currentView === "ide"}
               isCollapsed={isCollapsed}
               onClick={() => onViewChange("ide")}
             />
 
             {/* 一键安装 - Setup */}
-            <SidebarItem
+            {/* <SidebarItem
               icon={<Download className="h-5 w-5" />}
               label={t("setup.title", { defaultValue: "一键安装" })}
               isActive={currentView === "setup"}
               isCollapsed={isCollapsed}
               onClick={() => onViewChange("setup")}
               highlight
-            />
+            /> */}
 
             {/* AI供应商 - Providers */}
-            <SidebarItem
+            {/* <SidebarItem
               icon={<Layers className="h-5 w-5" />}
               label={t("common.providers", { defaultValue: "AI供应商" })}
               isActive={currentView === "providers"}
               isCollapsed={isCollapsed}
               onClick={() => onViewChange("providers")}
-            />
+            /> */}
 
             {/* Skills */}
             <SidebarItem
@@ -146,6 +170,15 @@ export function Sidebar({
               onClick={() => onViewChange("sessions")}
             />
 
+            {/* Agent管理 */}
+            <SidebarItem
+              icon={<Bot className="h-5 w-5" />}
+              label="Agent管理"
+              isActive={currentView === "agents"}
+              isCollapsed={isCollapsed}
+              onClick={() => onViewChange("agents")}
+            />
+
             {/* MCP */}
             <SidebarItem
               icon={<McpIcon size={20} />}
@@ -154,11 +187,27 @@ export function Sidebar({
               isCollapsed={isCollapsed}
               onClick={() => onViewChange("mcp")}
             />
+
+            <SidebarItem
+              icon={<Users className="h-5 w-5" />}
+              label={t("common.providers", { defaultValue: "用户管理" })}
+              isActive={currentView === "users"}
+              isCollapsed={isCollapsed}
+              onClick={() => onViewChange("users")}
+            />
+
+            <SidebarItem
+              icon={<Building2 className="h-5 w-5" />}
+              label={t("common.providers", { defaultValue: "组织管理" })}
+              isActive={currentView === "organizations"}
+              isCollapsed={isCollapsed}
+              onClick={() => onViewChange("organizations")}
+            />
           </div>
         </div>
 
         {/* Settings Section */}
-        <div className="p-3 border-t border-border">
+        <div className="p-3 border-t border-border relative" style={{ zIndex: 2 }}>
           <SidebarItem
             icon={<Settings className="h-5 w-5" />}
             label={t("settings.title", { defaultValue: "设置" })}

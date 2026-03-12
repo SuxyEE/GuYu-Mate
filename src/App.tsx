@@ -21,6 +21,7 @@ import {
   KeyRound,
   Shield,
   Cpu,
+  User,
 } from "lucide-react";
 import type { Provider, VisibleApps } from "@/types";
 import type { EnvConflict } from "@/types/env";
@@ -74,6 +75,8 @@ import AgentsDefaultsPanel from "@/components/openclaw/AgentsDefaultsPanel";
 import { SetupPage } from "@/components/setup";
 import { Sidebar } from "@/components/layout";
 import { IDEPage } from "@/components/ide/IDEPage";
+import { UsersPage } from "@/components/users/UsersPage";
+import { OrganizationsPage } from "@/components/organizations/OrganizationsPage";
 
 type View =
   | "providers"
@@ -90,7 +93,9 @@ type View =
   | "openclawTools"
   | "openclawAgents"
   | "setup"
-  | "ide";
+  | "ide"
+  | "users"
+  | "organizations";
 
 interface WebDavSyncStatusUpdatedPayload {
   source?: string;
@@ -199,6 +204,7 @@ function App() {
   const mcpPanelRef = useRef<any>(null);
   const skillsPageRef = useRef<any>(null);
   const unifiedSkillsPanelRef = useRef<any>(null);
+  const idePageRef = useRef<{ closeProject: () => void }>(null);
   const addActionButtonClass =
     "bg-orange-500 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-600 text-white shadow-lg shadow-orange-500/30 dark:shadow-orange-500/40 rounded-full w-8 h-8";
 
@@ -709,7 +715,11 @@ function App() {
         case "setup":
           return <SetupPage />;
         case "ide":
-          return <IDEPage />;
+          return <IDEPage ref={idePageRef} />;
+        case "users":
+          return <UsersPage />;
+        case "organizations":
+          return <OrganizationsPage />;
         default:
           return (
             <div className="px-6 flex flex-col h-[calc(100vh-8rem)] overflow-hidden">
@@ -885,53 +895,51 @@ function App() {
             className="flex items-center gap-1"
             style={{ WebkitAppRegion: "no-drag" } as any}
           >
-            {currentView !== "providers" ? (
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() =>
-                    setCurrentView(
-                      currentView === "skillsDiscovery"
-                        ? "skills"
-                        : "providers",
-                    )
+            {(currentView === "skillsDiscovery" || currentView === "ide") && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  if (currentView === "ide") {
+                    idePageRef.current?.closeProject();
+                  } else {
+                    setCurrentView("skills");
                   }
-                  className="mr-2 rounded-lg"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-                <h1 className="text-lg font-semibold">
-                  {currentView === "settings" && t("settings.title")}
-                  {currentView === "prompts" &&
-                    t("prompts.title", { appName: t(`apps.${activeApp}`) })}
-                  {currentView === "skills" && t("skills.title")}
-                  {currentView === "skillsDiscovery" && t("skills.title")}
-                  {currentView === "mcp" && t("mcp.unifiedPanel.title")}
-                  {currentView === "agents" && t("agents.title")}
-                  {currentView === "universal" &&
-                    t("universalProvider.title", {
-                      defaultValue: "统一供应商",
-                    })}
-                  {currentView === "sessions" && t("sessionManager.title")}
-                  {currentView === "workspace" && t("workspace.title")}
-                  {currentView === "openclawEnv" && t("openclaw.env.title")}
-                  {currentView === "openclawTools" && t("openclaw.tools.title")}
-                  {currentView === "openclawAgents" &&
-                    t("openclaw.agents.title")}
-                  {currentView === "setup" &&
-                    t("setup.title", { defaultValue: "环境配置" })}
-                  {currentView === "ide" && "GUYU IDE"}
-                </h1>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2" />
+                }}
+                className="mr-2 rounded-lg"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
             )}
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold">
+                {currentView === "settings" && t("settings.title")}
+                {currentView === "prompts" &&
+                  t("prompts.title", { appName: t(`apps.${activeApp}`) })}
+                {currentView === "skills" && t("skills.title")}
+                {currentView === "skillsDiscovery" && t("skills.title")}
+                {currentView === "mcp" && t("mcp.unifiedPanel.title")}
+                {currentView === "agents" && t("agents.title")}
+                {currentView === "universal" &&
+                  t("universalProvider.title", {
+                    defaultValue: "统一供应商",
+                  })}
+                {currentView === "sessions" && t("sessionManager.title")}
+                {currentView === "workspace" && t("workspace.title")}
+                {currentView === "openclawEnv" && t("openclaw.env.title")}
+                {currentView === "openclawTools" && t("openclaw.tools.title")}
+                {currentView === "openclawAgents" &&
+                  t("openclaw.agents.title")}
+                {currentView === "setup" &&
+                  t("setup.title", { defaultValue: "环境配置" })}
+                {currentView === "ide" && "工作台"}
+              </h1>
+            </div>
           </div>
 
           <div
             ref={toolbarRef}
-            className="flex flex-1 min-w-0 overflow-x-hidden justify-end items-center"
+            className="flex flex-1 min-w-0 overflow-x-hidden justify-end items-center gap-3"
           >
             <div
               className="flex shrink-0 items-center gap-1.5"
@@ -1035,6 +1043,20 @@ function App() {
                 </Button>
               )}
             </div>
+
+            {/* User Avatar */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:bg-muted"
+              style={{ WebkitAppRegion: "no-drag" } as any}
+              onClick={() => {
+                // TODO: 实现用户登录功能
+                toast.info("用户登录功能开发中...");
+              }}
+            >
+              <User className="w-5 h-5" />
+            </Button>
           </div>
         </div>
       </header>

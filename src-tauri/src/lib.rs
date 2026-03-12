@@ -1068,6 +1068,7 @@ pub fn run() {
             commands::delete_ide_path,
             commands::rename_ide_path,
             commands::start_preview_server,
+            commands::stop_preview_server,
             commands::update_ide_project_settings,
             // Setup and environment detection (v3.12.0+)
             commands::detect_node_environment,

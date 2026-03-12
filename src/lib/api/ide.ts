@@ -113,4 +113,9 @@ export const ideApi = {
   async startPreviewServer(projectPath: string): Promise<string> {
     return invoke("start_preview_server", { projectPath });
   },
+
+  // 停止预览服务器
+  async stopPreviewServer(projectPath: string): Promise<void> {
+    return invoke("stop_preview_server", { projectPath });
+  },
 };

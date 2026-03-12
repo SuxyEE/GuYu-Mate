@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { getIcon, hasIcon, getIconMetadata } from "@/icons/extracted";
 import { cn } from "@/lib/utils";
-import guyuLogo from "@/assets/icons/guyu-logo.jpg";
+import guyuLogo from "@/assets/icons/guyulogo.png";
 
 // 图片类型图标映射（非SVG）
 const IMAGE_ICONS: Record<string, string> = {

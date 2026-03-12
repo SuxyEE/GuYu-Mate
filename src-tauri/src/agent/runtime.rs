@@ -18,7 +18,7 @@ pub enum AgentEvent {
     Response { text: String },
     FileOperation { operation: FileOperation },
     Error { message: String },
-    Done,
+    Done { session_id: Option<String> },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -67,13 +67,21 @@ impl AgentRuntime {
     }
 
     async fn spawn_sidecar(&self) -> Result<SidecarProcess, AppError> {
-        let mut child = Command::new("node")
+        let node_path = which::which("node")
+            .or_else(|_| which::which("node.exe"))
+            .map(|p| p.to_string_lossy().to_string())
+            .unwrap_or_else(|_| "node".to_string());
+
+        let mut child = Command::new(&node_path)
             .arg(&self.sidecar_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .map_err(|e| AppError::Message(format!("启动 Sidecar 失败: {}", e)))?;
+            .map_err(|e| AppError::Message(format!(
+                "启动 Sidecar 失败: {}。Node.js 路径: {}。请确保已安装 Node.js",
+                e, node_path
+            )))?;
 
         let stdin = child.stdin.take().unwrap();
         let stdout = child.stdout.take().unwrap();
@@ -149,7 +157,7 @@ impl AgentRuntime {
                 if let AgentEvent::Response { text } = &event {
                     assistant_response.push_str(text);
                 }
-                if matches!(event, AgentEvent::Done) {
+                if matches!(event, AgentEvent::Done { .. }) {
                     self.emit_event(event)?;
                     break;
                 }

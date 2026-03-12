@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Send, FileEdit, FilePlus, FileX, Trash2, Sparkles, Code, MessageSquare, Bug, TestTube, History, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { ideApi, type IdeSession } from "@/lib/api/ide";
@@ -49,6 +50,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [showSkillsPopover, setShowSkillsPopover] = useState(false);
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -174,6 +176,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
             return prev;
           });
           if (currentOperations.length > 0) {
+            onFileOperations?.(currentOperations);
             onAutoPreview?.();
           }
           setCurrentOperations([]);
@@ -191,17 +194,20 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg?.role === "assistant" && lastMsg.operations && lastMsg.operations.length > 0) {
-      onFileOperations?.(lastMsg.operations);
-    }
-  }, [messages, onFileOperations]);
-
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage = input.trim();
+    let userMessage = input.trim();
+
+    // 如果选了Skills，附加提示词
+    if (selectedSkills.length > 0) {
+      const skillNames = selectedSkills
+        .map(id => installedSkills.find(s => s.id === id)?.name)
+        .filter(Boolean)
+        .join(', ');
+      userMessage = `${userMessage}\n\n请使用以下 Skills 来帮助完成任务：${skillNames}`;
+    }
+
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setIsLoading(true);
@@ -237,25 +243,27 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
     localStorage.setItem(`${getStorageKey()}-cleared`, "true");
   };
 
-  const handleClearHistory = async () => {
+  const handleClearHistory = () => {
     if (!currentSessionId) {
       alert("当前没有活动会话");
       return;
     }
+    setShowDeleteConfirm(true);
+  };
 
-    if (confirm("确定要删除当前会话吗？")) {
-      setMessages([]);
-      setSelectedSkills([]);
-      localStorage.removeItem(getStorageKey());
-      localStorage.removeItem(getSkillsStorageKey());
-      localStorage.setItem(`${getStorageKey()}-cleared`, "true");
+  const handleConfirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    setMessages([]);
+    setSelectedSkills([]);
+    localStorage.removeItem(getStorageKey());
+    localStorage.removeItem(getSkillsStorageKey());
+    localStorage.setItem(`${getStorageKey()}-cleared`, "true");
 
-      try {
-        await ideApi.clearSession(projectPath, currentSessionId);
-        setCurrentSessionId("");
-      } catch (error) {
-        console.error("删除会话失败:", error);
-      }
+    try {
+      await ideApi.clearSession(projectPath, currentSessionId);
+      setCurrentSessionId("");
+    } catch (error) {
+      console.error("删除会话失败:", error);
     }
   };
 
@@ -296,7 +304,12 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
                 .join('\n');
             }
 
+            // 移除 [上下文] 部分
             if (text) {
+              const contextIndex = text.indexOf('\n\n[上下文]\n');
+              if (contextIndex !== -1) {
+                text = text.substring(0, contextIndex);
+              }
               loadedMessages.push({ role: 'user', content: text });
             }
           } else if (entry.type === 'assistant' && entry.message) {
@@ -361,7 +374,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between p-2 border-b">
-        <span className="text-sm font-medium">Claude Code</span>
+        <span className="text-sm font-medium">对话</span>
         <div className="flex gap-1">
           <Button
             variant="ghost"
@@ -521,7 +534,7 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
             </PopoverTrigger>
             <PopoverContent className="w-80">
               <div className="space-y-2">
-                <h4 className="font-medium text-sm">选择 Skills</h4>
+                <h4 className="font-medium text-sm">选择Skills</h4>
                 <ScrollArea className="h-64">
                   {installedSkills.length === 0 ? (
                     <p className="text-xs text-muted-foreground p-2">
@@ -568,6 +581,26 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
             </PopoverContent>
           </Popover>
         </div>
+
+        {selectedSkills.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {selectedSkills.map(skillId => {
+              const skill = installedSkills.find(s => s.id === skillId);
+              return (
+                <Badge key={skillId} variant="secondary" className="flex items-center gap-1">
+                  <span>{skill?.name}</span>
+                  <button
+                    onClick={() => setSelectedSkills(prev => prev.filter(id => id !== skillId))}
+                    className="ml-1 hover:text-red-600 transition-colors"
+                  >
+                    ✕
+                  </button>
+                </Badge>
+              );
+            })}
+          </div>
+        )}
+
         <div className="flex gap-2">
           <Textarea
             value={input}
@@ -586,6 +619,25 @@ export function AIChatPanel({ projectPath, context, onSendMessage, onFileOperati
           </Button>
         </div>
       </div>
+
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>删除会话</DialogTitle>
+            <DialogDescription>
+              确定要删除当前会话吗？此操作无法撤销。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+              取消
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

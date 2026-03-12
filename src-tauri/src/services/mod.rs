@@ -1,6 +1,7 @@
 pub mod config;
 pub mod env_checker;
 pub mod env_manager;
+pub mod file_watcher;
 pub mod mcp;
 pub mod omo;
 pub mod prompt;
@@ -15,6 +16,7 @@ pub mod webdav_auto_sync;
 pub mod webdav_sync;
 
 pub use config::ConfigService;
+pub use file_watcher::FileWatcherService;
 pub use mcp::McpService;
 pub use omo::OmoService;
 pub use prompt::PromptService;

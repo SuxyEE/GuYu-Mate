@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, ExternalLink } from "lucide-react";
 
@@ -9,6 +9,11 @@ interface PreviewPanelProps {
 
 export function PreviewPanel({ previewUrl, onRefresh }: PreviewPanelProps) {
   const [key, setKey] = useState(0);
+
+  // 当 previewUrl 变化时，重置 iframe
+  useEffect(() => {
+    setKey(prev => prev + 1);
+  }, [previewUrl]);
 
   const handleRefresh = () => {
     setKey(prev => prev + 1);
@@ -48,6 +53,7 @@ export function PreviewPanel({ previewUrl, onRefresh }: PreviewPanelProps) {
           src={previewUrl}
           className="w-full h-full border-0"
           sandbox="allow-scripts allow-same-origin allow-forms"
+          title="Preview"
         />
       </div>
     </div>

@@ -1,15 +1,23 @@
 // 文件树组件
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronDown, File, Folder, FilePlus, FolderPlus, Trash2, Edit, RefreshCw, ChevronsDownUp } from "lucide-react";
+import { ChevronRight, ChevronDown, File, Folder, FilePlus, FolderPlus, Trash2, Edit, RefreshCw, ChevronsDownUp, AlertCircle } from "lucide-react";
 import type { FileNode } from "@/lib/api/ide";
 import { ideApi } from "@/lib/api/ide";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface FileTreeProps {
   nodes: FileNode[];
   onFileClick: (path: string) => void;
   onRefresh?: () => void;
+  onFileDelete?: (path: string) => void;
   projectPath?: string;
 }
 
@@ -29,7 +37,12 @@ interface EditState {
   isDir?: boolean;
 }
 
-export function FileTree({ nodes, onFileClick, onRefresh, projectPath }: FileTreeProps) {
+interface DeleteConfirmState {
+  open: boolean;
+  node: FileNode | null;
+}
+
+export function FileTree({ nodes, onFileClick, onRefresh, onFileDelete, projectPath }: FileTreeProps) {
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({
     visible: false,
     x: 0,
@@ -39,6 +52,7 @@ export function FileTree({ nodes, onFileClick, onRefresh, projectPath }: FileTre
   const [editState, setEditState] = useState<EditState | null>(null);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmState>({ open: false, node: null });
 
   const handleContextMenu = (e: React.MouseEvent, node: FileNode) => {
     e.preventDefault();
@@ -149,18 +163,25 @@ export function FileTree({ nodes, onFileClick, onRefresh, projectPath }: FileTre
     setEditState(null);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!contextMenu.node) return;
-    if (!confirm(`确定要删除 ${contextMenu.node.name} 吗？`)) return;
+    setDeleteConfirm({ open: true, node: contextMenu.node });
+    closeContextMenu();
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm.node) return;
 
     try {
-      await ideApi.deletePath(contextMenu.node.path);
+      const deletedPath = deleteConfirm.node.path;
+      await ideApi.deletePath(deletedPath);
       toast.success("删除成功");
+      onFileDelete?.(deletedPath);
       onRefresh?.();
     } catch (error) {
       toast.error(`删除失败: ${error}`);
     }
-    closeContextMenu();
+    setDeleteConfirm({ open: false, node: null });
   };
 
   return (
@@ -291,6 +312,33 @@ export function FileTree({ nodes, onFileClick, onRefresh, projectPath }: FileTre
           </button>
         </div>
       )}
+
+      <Dialog open={deleteConfirm.open} onOpenChange={(open) => {
+        if (!open) setDeleteConfirm({ open: false, node: null });
+      }}>
+        <DialogContent className="z-[9999] sm:max-w-[400px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
+              <DialogTitle>删除确认</DialogTitle>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm leading-relaxed">
+              即将删除 <span className="font-semibold text-foreground">{deleteConfirm.node?.name}</span>，此操作无法撤销。
+            </p>
+          </div>
+          <DialogFooter className="gap-2 pt-2">
+            <Button variant="outline" onClick={() => setDeleteConfirm({ open: false, node: null })}>
+              取消
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              <Trash2 className="h-4 w-4 mr-1" />
+              删除
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

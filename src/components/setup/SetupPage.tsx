@@ -21,7 +21,7 @@ import { setupApi, EnvironmentStatus, SystemInfo } from "@/lib/api/setup";
 import { settingsApi, providersApi } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { generateUUID } from "@/utils/uuid";
-import guyuLogo from "@/assets/icons/guyu-logo.jpg";
+import guyuLogo from "@/assets/icons/guyulogo.png";
 
 // Types for tool versions (reusing existing API)
 interface ToolVersion {
