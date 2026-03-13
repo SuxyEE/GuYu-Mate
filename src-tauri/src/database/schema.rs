@@ -389,6 +389,11 @@ impl Database {
                         Self::migrate_v4_to_v5(conn)?;
                         Self::set_user_version(conn, 5)?;
                     }
+                    5 => {
+                        log::info!("迁移数据库从 v5 到 v6（IDE 项目与会话支持）");
+                        Self::migrate_v5_to_v6(conn)?;
+                        Self::set_user_version(conn, 6)?;
+                    }
                     _ => {
                         return Err(AppError::Database(format!(
                             "未知的数据库版本 {version}，无法迁移到 {SCHEMA_VERSION}"
@@ -916,6 +921,39 @@ impl Database {
         )?;
 
         log::info!("v3 -> v4 迁移完成：已添加 OpenCode 支持");
+        Ok(())
+    }
+
+    /// v5 -> v6 迁移：添加 IDE 项目与会话表
+    fn migrate_v5_to_v6(conn: &Connection) -> Result<(), AppError> {
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS ide_projects (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                path TEXT NOT NULL UNIQUE,
+                created_at INTEGER NOT NULL,
+                last_opened_at INTEGER,
+                description TEXT,
+                settings TEXT
+            )",
+            [],
+        )
+        .map_err(|e| AppError::Database(format!("创建 ide_projects 表失败: {e}")))?;
+
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS ide_sessions (
+                id TEXT PRIMARY KEY,
+                project_id TEXT NOT NULL,
+                claude_session_path TEXT,
+                created_at INTEGER NOT NULL,
+                last_active_at INTEGER,
+                FOREIGN KEY (project_id) REFERENCES ide_projects(id) ON DELETE CASCADE
+            )",
+            [],
+        )
+        .map_err(|e| AppError::Database(format!("创建 ide_sessions 表失败: {e}")))?;
+
+        log::info!("v5 -> v6 迁移完成：已添加 IDE 项目与会话表");
         Ok(())
     }
 
