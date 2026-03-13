@@ -30,7 +30,7 @@ pub enum FileOperation {
 }
 
 struct SidecarProcess {
-    _child: Child,
+    child: Child,
     stdin: tokio::process::ChildStdin,
     stdout_reader: Arc<Mutex<tokio::io::Lines<BufReader<tokio::process::ChildStdout>>>>,
 }
@@ -56,7 +56,24 @@ impl AgentRuntime {
 
     async fn ensure_process(&self) -> Result<(), AppError> {
         let mut proc = self.process.lock().await;
-        if proc.is_none() {
+        let needs_spawn = match proc.as_mut() {
+            None => true,
+            Some(p) => {
+                // 非阻塞检测子进程是否已退出
+                match p.child.try_wait() {
+                    Ok(Some(status)) => {
+                        eprintln!("Agent sidecar 已退出 ({}), 重新启动...", status);
+                        true
+                    }
+                    Ok(None) => false, // 仍在运行
+                    Err(e) => {
+                        eprintln!("检测 sidecar 状态失败: {e}, 重新启动...");
+                        true
+                    }
+                }
+            }
+        };
+        if needs_spawn {
             *proc = Some(self.spawn_sidecar().await?);
         }
         Ok(())
@@ -96,7 +113,7 @@ impl AgentRuntime {
         });
 
         Ok(SidecarProcess {
-            _child: child,
+            child,
             stdin,
             stdout_reader: Arc::new(Mutex::new(BufReader::new(stdout).lines())),
         })
@@ -146,8 +163,16 @@ impl AgentRuntime {
             "skills": skills,
         });
 
-        proc.stdin.write_all(serde_json::to_string(&request)?.as_bytes()).await?;
-        proc.stdin.write_all(b"\n").await?;
+        let payload = serde_json::to_string(&request)?;
+        let write_result = proc.stdin.write_all(payload.as_bytes()).await
+            .and(proc.stdin.write_all(b"\n").await);
+        if let Err(e) = write_result {
+            // 管道断裂：清除死进程，下次调用 ensure_process 会自动重建
+            *proc_guard = None;
+            return Err(AppError::Message(format!(
+                "Agent 进程已崩溃，请重试 ({})", e
+            )));
+        }
 
         let mut assistant_response = String::new();
         let mut reader = proc.stdout_reader.lock().await;
