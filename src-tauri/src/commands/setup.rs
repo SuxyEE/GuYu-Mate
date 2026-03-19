@@ -64,8 +64,8 @@ fn extract_version(raw: &str) -> Option<String> {
     VERSION_RE.find(raw).map(|m| m.as_str().to_string())
 }
 
-/// 检测单个环境工具
-fn detect_tool(tool: &str) -> EnvironmentInfo {
+/// 通过 PATH 检测单个环境工具（原始逻辑）
+fn run_tool_version(tool: &str) -> EnvironmentInfo {
     #[cfg(target_os = "windows")]
     let output = std::process::Command::new("cmd")
         .args(["/C", &format!("{tool} --version")])
@@ -125,6 +125,245 @@ fn detect_tool(tool: &str) -> EnvironmentInfo {
             is_installed: false,
         },
     }
+}
+
+/// 在 Windows 常见安装路径中查找 node.exe
+/// GUI 进程继承的 PATH 是系统启动时的快照，用户安装 Node.js 后新增的路径
+/// 以及 nvm-windows/Volta/fnm 等工具管理的路径不在默认 PATH 里，需要主动探测。
+#[cfg(target_os = "windows")]
+fn find_node_in_common_paths() -> Option<std::path::PathBuf> {
+    let mut candidates: Vec<String> = Vec::new();
+
+    if let Ok(pf) = std::env::var("ProgramFiles") {
+        candidates.push(format!("{pf}\\nodejs\\node.exe"));
+    }
+    if let Ok(pf86) = std::env::var("ProgramFiles(x86)") {
+        candidates.push(format!("{pf86}\\nodejs\\node.exe"));
+    }
+    if let Ok(localappdata) = std::env::var("LOCALAPPDATA") {
+        candidates.push(format!("{localappdata}\\Volta\\bin\\node.exe"));
+    }
+    if let Ok(userprofile) = std::env::var("USERPROFILE") {
+        candidates.push(format!("{userprofile}\\.fnm\\aliases\\default\\node.exe"));
+    }
+    candidates.push("C:\\Program Files\\nodejs\\node.exe".to_string());
+    candidates.push("C:\\Program Files (x86)\\nodejs\\node.exe".to_string());
+
+    for candidate in &candidates {
+        let path = std::path::Path::new(candidate.as_str());
+        if path.exists() {
+            return Some(path.to_path_buf());
+        }
+    }
+
+    // nvm-windows: %APPDATA%\nvm\<version>\node.exe —— 需要递归搜索版本子目录
+    if let Ok(appdata) = std::env::var("APPDATA") {
+        let nvm_dir = std::path::Path::new(&appdata).join("nvm");
+        if nvm_dir.is_dir() {
+            if let Ok(entries) = std::fs::read_dir(&nvm_dir) {
+                for entry in entries.flatten() {
+                    let node_exe = entry.path().join("node.exe");
+                    if node_exe.exists() {
+                        return Some(node_exe);
+                    }
+                }
+            }
+        }
+    }
+
+    None
+}
+
+/// 将命令输出转换为 EnvironmentInfo
+fn make_env_info(tool: &str, output: std::io::Result<std::process::Output>) -> EnvironmentInfo {
+    match output {
+        Ok(out) => {
+            let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+            let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
+            if out.status.success() {
+                let raw = if stdout.is_empty() { &stderr } else { &stdout };
+                if raw.is_empty() {
+                    EnvironmentInfo {
+                        name: tool.to_string(),
+                        version: None,
+                        path: None,
+                        error: Some("not installed".to_string()),
+                        is_installed: false,
+                    }
+                } else {
+                    let path = find_tool_path(tool);
+                    EnvironmentInfo {
+                        name: tool.to_string(),
+                        version: extract_version(raw),
+                        path,
+                        error: None,
+                        is_installed: true,
+                    }
+                }
+            } else {
+                EnvironmentInfo {
+                    name: tool.to_string(),
+                    version: None,
+                    path: None,
+                    error: Some(if stderr.is_empty() {
+                        "not installed".to_string()
+                    } else {
+                        stderr
+                    }),
+                    is_installed: false,
+                }
+            }
+        }
+        Err(e) => EnvironmentInfo {
+            name: tool.to_string(),
+            version: None,
+            path: None,
+            error: Some(e.to_string()),
+            is_installed: false,
+        },
+    }
+}
+
+/// 检测单个环境工具
+/// macOS 下先用扩展 PATH 的 shell 检测（GUI 进程不继承用户 shell PATH），失败后探测常见安装路径
+/// Windows 下先尝试 PATH，失败后探测常见安装路径（处理 GUI 进程 PATH 快照问题）
+fn detect_tool(tool: &str) -> EnvironmentInfo {
+    // macOS: GUI 进程不继承 .zshrc/.bashrc 中的 PATH，需要扩展路径检测
+    #[cfg(target_os = "macos")]
+    {
+        let extended_path = "/opt/homebrew/bin:/usr/local/bin:/opt/local/bin";
+        let output = std::process::Command::new("sh")
+            .arg("-c")
+            .arg(format!(
+                "export PATH=\"{extended_path}:$PATH\"; {tool} --version"
+            ))
+            .output();
+        match output {
+            Ok(out) if out.status.success() => {
+                let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+                let stderr = String::from_utf8_lossy(&out.stderr).trim().to_string();
+                let raw = if stdout.is_empty() { &stderr } else { &stdout };
+                if !raw.is_empty() {
+                    let path = {
+                        let which_out = std::process::Command::new("sh")
+                            .arg("-c")
+                            .arg(format!(
+                                "export PATH=\"{extended_path}:$PATH\"; which {tool}"
+                            ))
+                            .output()
+                            .ok();
+                        which_out.and_then(|o| {
+                            let p = String::from_utf8_lossy(&o.stdout).trim().to_string();
+                            if p.is_empty() { None } else { Some(p) }
+                        })
+                    };
+                    return EnvironmentInfo {
+                        name: tool.to_string(),
+                        version: extract_version(raw),
+                        path,
+                        error: None,
+                        is_installed: true,
+                    };
+                }
+            }
+            _ => {}
+        }
+        // 尝试常见绝对路径（nvm、volta、fnm 等版本管理器安装的路径）
+        if tool == "node" || tool == "npm" {
+            let home = std::env::var("HOME").unwrap_or_default();
+            let node_candidates = vec![
+                format!("{home}/.volta/bin/node"),
+                format!("{home}/.fnm/aliases/default/bin/node"),
+            ];
+            let nvm_dir = format!("{home}/.nvm/versions/node");
+            let mut node_path: Option<std::path::PathBuf> = None;
+            if std::path::Path::new(&nvm_dir).is_dir() {
+                if let Ok(entries) = std::fs::read_dir(&nvm_dir) {
+                    let mut versions: Vec<std::path::PathBuf> = entries
+                        .flatten()
+                        .filter_map(|e| {
+                            let p = e.path().join("bin/node");
+                            if p.exists() { Some(p) } else { None }
+                        })
+                        .collect();
+                    versions.sort();
+                    node_path = versions.into_iter().last();
+                }
+            }
+            if node_path.is_none() {
+                for c in &node_candidates {
+                    if std::path::Path::new(c).exists() {
+                        node_path = Some(std::path::PathBuf::from(c));
+                        break;
+                    }
+                }
+            }
+            if let Some(ref np) = node_path {
+                let exe = if tool == "npm" {
+                    np.parent().map(|p| p.join("npm")).unwrap_or_default()
+                } else {
+                    np.clone()
+                };
+                if let Ok(out) = std::process::Command::new(&exe).arg("--version").output() {
+                    let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+                    if out.status.success() && !stdout.is_empty() {
+                        return EnvironmentInfo {
+                            name: tool.to_string(),
+                            version: extract_version(&stdout),
+                            path: Some(exe.to_string_lossy().to_string()),
+                            error: None,
+                            is_installed: true,
+                        };
+                    }
+                }
+            }
+        }
+        // fallback: 标准 sh 检测
+        let output = std::process::Command::new("sh")
+            .arg("-c")
+            .arg(format!("{tool} --version"))
+            .output();
+        return make_env_info(tool, output);
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let result = run_tool_version(tool);
+        if !result.is_installed && (tool == "node" || tool == "npm") {
+            if let Some(node_path) = find_node_in_common_paths() {
+                let exe = if tool == "npm" {
+                    node_path
+                        .parent()
+                        .map(|p| p.join("npm.cmd"))
+                        .unwrap_or_default()
+                } else {
+                    node_path.clone()
+                };
+                if exe.exists() {
+                    if let Ok(out) = std::process::Command::new(&exe)
+                        .arg("--version")
+                        .creation_flags(CREATE_NO_WINDOW)
+                        .output()
+                    {
+                        let stdout = String::from_utf8_lossy(&out.stdout).trim().to_string();
+                        if out.status.success() && !stdout.is_empty() {
+                            return EnvironmentInfo {
+                                name: tool.to_string(),
+                                version: extract_version(&stdout),
+                                path: Some(exe.to_string_lossy().to_string()),
+                                error: None,
+                                is_installed: true,
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    run_tool_version(tool)
 }
 
 /// 查找工具的安装路径
@@ -521,21 +760,31 @@ async fn download_file(
     emit_progress(app, task_id, &format!("下载完成 ({mb:.1} MB)"));
     Ok(dest)
 }
-/// Windows: 静默安装 MSI
+/// Windows: 安装 MSI（使用 /passive 代替 /qn 以支持 UAC 自动提权）
+/// /passive  — 显示进度条但无需用户交互，UAC 提权对话框会自动弹出
+/// /norestart — 安装后不自动重启
+/// ALLUSERS=1 — 安装到 Program Files（所有用户可用）
 async fn install_node_windows(
     app: &AppHandle,
     task_id: &str,
     msi_path: &std::path::Path,
 ) -> Result<(), String> {
-    emit_progress(app, task_id, "正在静默安装 Node.js (msiexec)...");
+    emit_progress(app, task_id, "正在安装 Node.js，请在弹出的 UAC 提示框中点击「是」...");
     let path_str = msi_path.to_string_lossy();
     let status = TokioCommand::new("msiexec")
-        .args(["/i", &path_str, "/qn", "/norestart"])
+        .args(["/i", &path_str, "/passive", "/norestart", "ALLUSERS=1"])
         .status()
         .await
         .map_err(|e| format!("启动安装程序失败: {e}"))?;
     if !status.success() {
-        return Err(format!("MSI 安装失败，退出码: {:?}", status.code()));
+        let msg = match status.code() {
+            Some(1602) => "用户取消了安装".to_string(),
+            Some(1603) => "安装失败（权限不足或系统错误），建议手动下载安装".to_string(),
+            Some(1638) => "已安装更新版本的 Node.js，无需重复安装".to_string(),
+            Some(c) => format!("MSI 安装失败，退出码: {c}"),
+            None => "MSI 安装失败（未知退出码）".to_string(),
+        };
+        return Err(msg);
     }
     emit_progress(app, task_id, "Node.js MSI 安装完成");
     Ok(())
